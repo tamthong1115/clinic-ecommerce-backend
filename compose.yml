@@ -1,0 +1,23 @@
+services:
+  postgres:
+    container_name: clinic_ecommerce_pg_sql
+    image : postgres
+    environment:
+      POSTGRES_USER : ${POSTGRES_USER}
+      POSTGRES_PASSWORD : ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+
+networks:
+  clinic-ecommerce-net:
+    driver: bridge
+
+volumes:
+  postgres:
+
