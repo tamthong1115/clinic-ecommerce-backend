@@ -10,4 +10,4 @@ eureka:
 
 
 server:
-  port: 8765
+  port: 8761
