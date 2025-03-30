@@ -4,6 +4,7 @@ import com.fg.authservice.dto.RegisterRequestDTO;
 import com.fg.authservice.exception.InvalidCredentialsException;
 import com.fg.authservice.exception.UserAlreadyExistsException;
 import com.fg.authservice.exception.UserNotFoundException;
+import com.fg.authservice.user.Role;
 import com.fg.authservice.user.User;
 import com.fg.authservice.user.UserService;
 import com.fg.authservice.dto.LoginRequestDTO;
@@ -49,7 +50,7 @@ public class AuthService {
     User user = new User();
     user.setEmail(registerRequestDTO.getEmail());
     user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
-    user.setRole("USER"); // Set default role
+    user.setRole(Role.USER);
 
     return userService.save(user);
   }

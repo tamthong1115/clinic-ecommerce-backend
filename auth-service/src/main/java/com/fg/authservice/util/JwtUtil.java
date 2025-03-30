@@ -1,5 +1,6 @@
 package com.fg.authservice.util;
 
+import com.fg.authservice.user.Role;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -24,7 +25,7 @@ public class JwtUtil {
     this.secretKey = Keys.hmacShaKeyFor(keyBytes);
   }
 
-  public String generateToken(String email, String role) {
+  public String generateToken(String email, Role role) {
     return Jwts.builder()
         .subject(email)
         .claim("role", role)
