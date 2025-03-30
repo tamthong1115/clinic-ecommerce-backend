@@ -6,6 +6,7 @@ import com.fg.authservice.dto.RegisterRequestDTO;
 import com.fg.authservice.dto.RegisterResponseDTO;
 import com.fg.authservice.user.User;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class AuthController {
     @Operation(summary = "Generate token on user login")
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(
-            @RequestBody LoginRequestDTO loginRequestDTO) {
+            @RequestBody @Valid LoginRequestDTO loginRequestDTO) {
 
         Optional<String> tokenOptional = authService.authenticate(loginRequestDTO);
 
@@ -41,7 +42,7 @@ public class AuthController {
     @Operation(summary = "Register a new user")
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDTO> register(
-            @RequestBody RegisterRequestDTO registerRequestDTO) {
+            @RequestBody @Valid RegisterRequestDTO registerRequestDTO) {
 
         User user = authService.register(registerRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
