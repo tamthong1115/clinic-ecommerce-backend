@@ -23,6 +23,6 @@ secrets
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
-
+.idea/**
 .env
 
