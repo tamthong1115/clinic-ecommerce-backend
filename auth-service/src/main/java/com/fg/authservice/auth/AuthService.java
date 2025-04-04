@@ -1,16 +1,20 @@
 package com.fg.authservice.auth;
 
-import com.fg.authservice.dto.RegisterRequestDTO;
+import com.fg.authservice.dto.*;
 import com.fg.authservice.exception.InvalidCredentialsException;
 import com.fg.authservice.exception.UserAlreadyExistsException;
 import com.fg.authservice.exception.UserNotFoundException;
 import com.fg.authservice.user.User;
+import com.fg.authservice.user.UserMapper;
 import com.fg.authservice.user.UserService;
-import com.fg.authservice.dto.LoginRequestDTO;
 import com.fg.authservice.util.JwtUtil;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,25 +24,40 @@ import java.util.Optional;
 public class AuthService {
 
   private final UserService userService;
-  private final PasswordEncoder passwordEncoder;
   private final JwtUtil jwtUtil;
+  private final UserMapper userMapper;
+  private final AuthenticationManager authenticationManager;
+  private final UserDetailsService userDetailsService;
 
 
-  public Optional<String> authenticate(LoginRequestDTO loginRequestDTO) {
-    User user = userService.findByEmail(loginRequestDTO.getEmail())
-            .orElseThrow(() -> new UserNotFoundException(
-                    String.format("User with email %s not found", loginRequestDTO.getEmail())
-            ));
+  public Optional<LoginResponseDTO> authenticate(LoginRequestDTO loginRequestDTO) {
+    try {
+      User user = userService.findByEmail(loginRequestDTO.getEmail())
+              .orElseThrow(() -> new UserNotFoundException(
+                      String.format("User with email %s not found", loginRequestDTO.getEmail())
+              ));
 
-    if(!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
-      throw new InvalidCredentialsException("Invalid credentials email or password");
+      authenticationManager.authenticate(
+              new UsernamePasswordAuthenticationToken(
+                      loginRequestDTO.getEmail(),
+                      loginRequestDTO.getPassword()
+              )
+      );
+
+      UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+      String token = jwtUtil.generateToken(userDetails);
+      UserLoginResponseDTO userLoginResponseDTO = userMapper.toUserLoginResponseDTO(user);
+      LoginResponseDTO loginResponseDTO = new LoginResponseDTO(token);
+      loginResponseDTO.setUser(userLoginResponseDTO);
+
+      return Optional.of(loginResponseDTO);
+    } catch (AuthenticationException e) {
+      throw new InvalidCredentialsException("Invalid email or password");
     }
-
-    Optional<String> token = Optional.of(jwtUtil.generateToken(user.getEmail(), user.getRole()));
-    return token;
   }
 
   public User register(RegisterRequestDTO registerRequestDTO) {
+
     userService.findByEmail(registerRequestDTO.getEmail())
             .ifPresent(user -> {
               throw new UserAlreadyExistsException(
@@ -46,20 +65,27 @@ public class AuthService {
               );
             });
 
-    User user = new User();
-    user.setEmail(registerRequestDTO.getEmail());
-    user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
-    user.setRole("USER"); // Set default role
+    User newUser = userMapper.toUser(registerRequestDTO);
 
-    return userService.save(user);
+    return userService.save(newUser);
   }
 
   public boolean validateToken(String token) {
     try {
-      jwtUtil.validateToken(token);
-      return true;
-    } catch (JwtException e){
+      UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.extractUsername(token));
+      return jwtUtil.isTokenValid(token, userDetails);
+    } catch (JwtException e) {
       return false;
     }
+  }
+
+  public UserDTO getCurrentUser(UserDetails userDetails) {
+     User user = userService.findByEmail(userDetails.getUsername())
+            .orElseThrow(() -> new UserNotFoundException(
+                    String.format("User with email %s not found", userDetails.getUsername())
+            ));
+
+     return userMapper.toUserDTO(user);
+
   }
 }

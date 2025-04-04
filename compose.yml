@@ -14,35 +14,16 @@ services:
       - clinic-ecommerce-net
     restart: unless-stopped
 
-#  keycloak:
-#    container_name: clinic_ecommerce_keycloak
-#    image: quay.io/keycloak/keycloak:26.1.3
-#    ports:
-#      - ${KEYCLOAK_PORT:-9090}:8080
-#    environment:
-#      KC_DB: postgres
-#      KC_DB_URL: jdbc:postgresql://host.docker.internal:5432/keycloak
-#      KC_DB_USERNAME: ${POSTGRES_USER:-postgres}
-#      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-password}
-#      KC_HOSTNAME: localhost
-#      KC_HEALTH_ENABLED: true # Enable health and metrics support
-#      KC_METRICS_ENABLED: true
-#      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
-#      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
-##      KC_HTTP_PORT: ${KEYCLOAK_PORT:-9090}
-#      KC_HTTP_RELATIVE_PATH: /
-#    command:
-#      - "start-dev"
-#      - --import-realm
-#    extra_hosts:
-#      - "host.docker.internal:host-gateway"
-#    volumes:
-#      - ./keycloak/:/opt/keycloak/data/import/
-#    depends_on:
-#      - postgres
-#    networks:
-#      - clinic-ecommerce-net
-#    restart: unless-stopped
+
+  zipkin:
+    image: openzipkin/zipkin:3
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+
 
 
 networks:

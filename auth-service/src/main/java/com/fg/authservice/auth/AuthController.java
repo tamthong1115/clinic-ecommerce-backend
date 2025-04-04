@@ -1,13 +1,14 @@
 package com.fg.authservice.auth;
 
-import com.fg.authservice.dto.LoginRequestDTO;
-import com.fg.authservice.dto.LoginResponseDTO;
-import com.fg.authservice.dto.RegisterRequestDTO;
-import com.fg.authservice.dto.RegisterResponseDTO;
+import com.fg.authservice.dto.*;
 import com.fg.authservice.user.User;
+import com.fg.authservice.user.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -16,8 +17,8 @@ import java.util.Optional;
 @RequestMapping("/api/v1")
 public class AuthController {
 
-
     private final AuthService authService;
+
 
     public AuthController(AuthService authService) {
         this.authService = authService;
@@ -26,24 +27,24 @@ public class AuthController {
     @Operation(summary = "Generate token on user login")
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(
-            @RequestBody LoginRequestDTO loginRequestDTO) {
+            @RequestBody @Valid LoginRequestDTO loginRequestDTO) {
 
-        Optional<String> tokenOptional = authService.authenticate(loginRequestDTO);
+        Optional<LoginResponseDTO> loginResponseOptional = authService.authenticate(loginRequestDTO);
 
-        if (tokenOptional.isEmpty()) {
+        if (loginResponseOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String token = tokenOptional.get();
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        return ResponseEntity.ok(loginResponseOptional.get());
+
     }
 
     @Operation(summary = "Register a new user")
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDTO> register(
-            @RequestBody RegisterRequestDTO registerRequestDTO) {
+            @RequestBody @Valid RegisterRequestDTO registerRequestDTO) {
 
-        User user = authService.register(registerRequestDTO);
+        authService.register(registerRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new RegisterResponseDTO("User registered successfully"));
     }
@@ -54,12 +55,19 @@ public class AuthController {
             @RequestHeader("Authorization") String authHeader) {
 
         // Authorization: Bearer <token>
-        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         return authService.validateToken(authHeader.substring(7))
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @Operation(summary = "Get current user details")
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        UserDTO userDTO = authService.getCurrentUser(userDetails);
+        return ResponseEntity.ok(userDTO);
     }
 }
