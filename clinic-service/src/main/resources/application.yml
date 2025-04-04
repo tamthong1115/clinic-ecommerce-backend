@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: clinic-service
+  config:
+    import: optional:configserver:http://localhost:8888
