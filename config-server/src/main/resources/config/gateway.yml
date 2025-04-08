@@ -21,9 +21,6 @@ spring:
             allowed-headers:
               - "*"
 
-
-
-
       routes:
         - id: auth-service
           uri: lb://auth-service
@@ -31,6 +28,16 @@ spring:
             - Path=/auth/**, /oauth2/**
           filters:
             - StripPrefix=1
+
+
+        - id: doctor-service
+          uri: lb://doctor-service
+          predicates:
+            - Path=/doctor/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+
 
 server:
   port: 8765

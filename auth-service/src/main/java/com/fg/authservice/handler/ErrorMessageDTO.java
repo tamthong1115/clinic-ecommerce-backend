@@ -1,20 +1,17 @@
 package com.fg.authservice.handler;
 
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Map;
 
 @Data
 @Builder
 public class ErrorMessageDTO implements Serializable {
 
+    private String code;
     private String message;
-
-    private Instant date;
-
+    private String timestamp;
     private Map<String, String> details;
-
 }
