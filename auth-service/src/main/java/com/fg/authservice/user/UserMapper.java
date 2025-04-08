@@ -15,6 +15,7 @@ public class UserMapper {
                 .username(registerRequestDTO.getUsername())
                 .email(registerRequestDTO.getEmail())
                 .role(Role.USER)
+                .emailVerified(false)
                 .build();
     }
 
