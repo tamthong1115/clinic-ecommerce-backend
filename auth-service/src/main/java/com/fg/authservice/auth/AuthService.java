@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,6 +29,7 @@ public class AuthService {
   private final UserMapper userMapper;
   private final AuthenticationManager authenticationManager;
   private final UserDetailsService userDetailsService;
+  private final PasswordEncoder passwordEncoder;
 
 
   public Optional<LoginResponseDTO> authenticate(LoginRequestDTO loginRequestDTO) {
@@ -37,6 +39,7 @@ public class AuthService {
                       String.format("User with email %s not found", loginRequestDTO.getEmail())
               ));
 
+      // Authenticate the user and add user to the security context
       authenticationManager.authenticate(
               new UsernamePasswordAuthenticationToken(
                       loginRequestDTO.getEmail(),
@@ -66,7 +69,7 @@ public class AuthService {
             });
 
     User newUser = userMapper.toUser(registerRequestDTO);
-
+    newUser.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
     return userService.save(newUser);
   }
 

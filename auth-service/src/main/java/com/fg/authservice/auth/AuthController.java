@@ -31,12 +31,7 @@ public class AuthController {
 
         Optional<LoginResponseDTO> loginResponseOptional = authService.authenticate(loginRequestDTO);
 
-        if (loginResponseOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        return ResponseEntity.ok(loginResponseOptional.get());
-
+         return loginResponseOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
     @Operation(summary = "Register a new user")

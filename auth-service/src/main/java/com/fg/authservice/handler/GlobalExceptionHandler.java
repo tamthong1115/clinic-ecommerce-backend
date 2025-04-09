@@ -7,56 +7,63 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private ErrorMessageDTO buildErrorResponse(String message, String code, Map<String, String> details) {
+        String timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
+        return ErrorMessageDTO.builder()
+                .code(code)
+                .message(message)
+                .timestamp(timestamp)
+                .details(details)
+                .build();
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorMessageDTO> handleUserNotFoundException(UserNotFoundException e) {
-        ErrorMessageDTO errorMessage = ErrorMessageDTO.builder()
-                .message(e.getMessage())
-                .date(Instant.now())
-                .build();
-        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(
+                buildErrorResponse(e.getMessage(), ErrorCode.USER_NOT_FOUND.name(), null),
+                HttpStatus.NOT_FOUND
+        );
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ErrorMessageDTO> handleUserAlreadyExistsException(UserAlreadyExistsException e) {
-        ErrorMessageDTO errorMessageDTO = ErrorMessageDTO.builder()
-                .message(e.getMessage())
-                .date(Instant.now())
-                .build();
-        return new ResponseEntity<>(errorMessageDTO, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(
+                buildErrorResponse(e.getMessage(), ErrorCode.USER_ALREADY_EXISTS.name(), null),
+                HttpStatus.CONFLICT
+        );
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorMessageDTO> handleInvalidCredentialsException(InvalidCredentialsException e) {
-        ErrorMessageDTO errorMessageDTO = ErrorMessageDTO.builder()
-                .message(e.getMessage())
-                .date(Instant.now())
-                .build();
-
-        return new ResponseEntity<>(errorMessageDTO, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(
+                buildErrorResponse(e.getMessage(), ErrorCode.INVALID_CREDENTIALS.name(), null),
+                HttpStatus.UNAUTHORIZED
+        );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> response = new HashMap<>();
-        StringBuilder errorMessage = new StringBuilder("Validation failed: ");
+    public ResponseEntity<ErrorMessageDTO> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> validationErrors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String message = error.getDefaultMessage();
-            errorMessage.append(message).append("; ");
+            validationErrors.put(fieldName, message);
         });
-        response.put("message", errorMessage.toString());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(
+                buildErrorResponse("Validation failed", ErrorCode.VALIDATION_ERROR.name(), validationErrors),
+                HttpStatus.BAD_REQUEST
+        );
     }
 }
