@@ -1,14 +1,17 @@
-package com.fg.clinicservice.clinic;
+package com.fg.clinicservice.controller;
 
 
 
+import com.fg.clinicservice.clinic.model.Clinic;
 import com.fg.clinicservice.clinic.model.ClinicDto;
 import com.fg.clinicservice.clinic.model.ClinicForm;
-import com.fg.clinicservice.clinic.service.ClinicServiceImpl;
+import com.fg.clinicservice.clinic.model.ClinicRequest;
 import com.fg.clinicservice.clinic.service.IClinicService;
-import com.fg.clinicservice.clinic_service.model.ClinicService;
+import com.fg.clinicservice.config.feign.AuthClient;
 import com.fg.clinicservice.response.ResponseData;
+import com.fg.common.dto.UserDto;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.ws.rs.ForbiddenException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +22,7 @@ import java.util.UUID;
 public class ClinicController {
 
     private IClinicService iClinicService;
+    private AuthClient authClient;
 
     public ClinicController(IClinicService iClinicService) {
         this.iClinicService = iClinicService;
@@ -36,6 +40,21 @@ public class ClinicController {
     @PostMapping("/update/{id}")
     public ResponseEntity<ResponseData<ClinicDto>> updateClinic(@PathVariable UUID id, @RequestBody ClinicForm clinicForm) {
         ResponseData<ClinicDto> response = iClinicService.updateClinic(id,clinicForm);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Update status of clinic")
+    @PatchMapping("/set-status/{id}")
+    public ResponseEntity<ResponseData<String>> updateClinicStatus(
+            @RequestHeader("Authorization") String token,
+            @PathVariable UUID id,
+            @RequestBody ClinicRequest request
+    ) {
+        UserDto user = authClient.validateToken(token).getBody();
+        if (!authClient.hasRole(user.getId(), "USER")) {
+            throw new ForbiddenException();
+        }
+        ResponseData<String> response = iClinicService.updateClinicStatus(id, request.getStatus());
         return ResponseEntity.ok(response);
     }
 

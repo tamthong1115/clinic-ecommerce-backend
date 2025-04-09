@@ -11,5 +11,5 @@ spring:
       ddl-auto: update
       properties:
         hibernate:
-          dealect: org.hibernate.dialect.PostgresSQLDialect
+          dialect: org.hibernate.dialect.PostgresSQLDialect
       show-sql: true
