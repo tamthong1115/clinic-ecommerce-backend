@@ -12,21 +12,26 @@
         <module name="eureka-server" />
         <module name="gateway" />
       </profile>
-      <profile name="Annotation profile for patient-service" enabled="true">
+      <profile name="Annotation profile for clinic-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
+        <module name="clinic-service" />
         <module name="patient-service" />
         <module name="doctor-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="common-dto" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="auth-service" options="-parameters" />
+      <module name="clinic-service" options="-parameters" />
       <module name="config-server" options="-parameters" />
       <module name="doctor-service" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
