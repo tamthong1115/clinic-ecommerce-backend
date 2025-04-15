@@ -38,6 +38,5 @@ spring:
             - StripPrefix=1
             - JwtValidation
 
-
 server:
   port: 8765

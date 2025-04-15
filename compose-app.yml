@@ -62,30 +62,29 @@ services:
       CONFIG_SERVER_URL: http://config-server:8888
       ZIPKIN_HOSTNAME: http://zipkin:9411
 
-#
-#  doctor-service:
-#    build:
-#      context: ./doctor-service
-#      dockerfile: Dockerfile
-#      args:
-#        CONFIG_SERVER_URL: http://config-server:8888
-#    ports:
-#      - "8050:8050"
-#    networks:
-#      - clinic-ecommerce-net
-#    restart: unless-stopped
-#    depends_on:
-#      config-server:
-#        condition: service_started
-#      postgres:
-#        condition: service_started
-#      eureka-server:
-#        condition: service_healthy
-#    environment:
-#      CONFIG_SERVER_URL: http://config-server:8888
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/doctor
-#      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
-#      EUREKA_HOSTNAME: eureka-server
+
+  doctor-service:
+    build:
+      context: ./doctor-service
+      dockerfile: Dockerfile
+    ports:
+      - "8050:8050"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      eureka-server:
+        condition: service_healthy
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/doctor
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      EUREKA_HOSTNAME: eureka-server
+      ZIPKIN_HOSTNAME: http://zipkin:9411
 
   auth-service:
     build:
@@ -109,7 +108,7 @@ services:
       EUREKA_HOSTNAME: eureka-server
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user
       ZIPKIN_HOSTNAME: http://zipkin:9411
-      JWT_SECRET: ${JWT_SECRET:-bc01c9641a1dd8384ea8ec4155c4dbd273dd710dd9105303bedfe2516ec163eb}
+      JWT_SECRET: ${JWT_SECRET}
     env_file:
       - .env
 
