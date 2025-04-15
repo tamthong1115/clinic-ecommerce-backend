@@ -25,10 +25,11 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/api/v1/login/**", "/api/v1/register/**", "/swagger-ui.html", "/swagger/**", "/v3/**", "/v3/api-docs/**", "/swagger-ui/index.html", "/swagger-ui/**")
+                                .requestMatchers("/api/v1/login/**", "/api/v1/register/**", "/api/v1/validate", "/swagger-ui.html", "/swagger/**", "/v3/**", "/v3/api-docs/**", "/swagger-ui/index.html", "/swagger-ui/**")
                                 .permitAll()
-                                .requestMatchers("/api/v1/clinic/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_DOCTOR")
-                                .anyRequest().authenticated())
+                                .anyRequest().authenticated()
+                )
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)

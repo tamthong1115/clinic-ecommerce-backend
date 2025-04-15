@@ -1,4 +1,7 @@
 package com.fg.doctorservice.doctor;
 
-public class DoctorServiceImpl {
+import org.springframework.stereotype.Service;
+
+@Service
+public class DoctorServiceImpl implements DoctorService {
 }

@@ -1,5 +1,5 @@
 package com.fg.authservice.user;
 
 public enum Role {
-    USER, ADMIN
+    USER, ADMIN, DOCTOR, PATIENT
 }

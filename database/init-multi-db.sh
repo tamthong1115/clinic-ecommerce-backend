@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# Function to check and create a database if it doesn't exist.
 create_db() {
   DB_NAME=$1
   # Query returns "1" if the database exists.

@@ -1,4 +1,3 @@
-
 spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/doctor}
@@ -14,5 +13,5 @@ spring:
     show-sql: true
 
 
-sever:
+server:
   port: 8050

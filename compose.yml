@@ -1,10 +1,12 @@
 services:
   postgres:
     container_name: clinic_ecommerce_pg_sql
-    image : postgres:17-alpine
+    build:
+      context: ./database
+      dockerfile: Dockerfile
     environment:
-      POSTGRES_USER : ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD : ${POSTGRES_PASSWORD:-password}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       PGDATA: /var/lib/postgresql/data
     volumes:
       - postgres:/var/lib/postgresql/data
@@ -13,6 +15,11 @@ services:
     networks:
       - clinic-ecommerce-net
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 
   zipkin:
