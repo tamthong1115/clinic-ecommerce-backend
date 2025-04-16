@@ -23,20 +23,14 @@ management:
       endpoint: ${ZIPKIN_HOSTNAME:http://localhost:9411}/api/v2/spans
 
 logging:
-#  pattern:
-#    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
-    level:
-      root: debug
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+#    level:
+#      root: debug
 
 
 
 application:
   frontend:
     url: http://localhost:5173
-
-
-#management:
-#  tracing:
-#    sampling:
-#      probability: 1.0
 
