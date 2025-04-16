@@ -49,7 +49,6 @@
             clinic.setClinicAddress(form.getClinicAddress());
             clinic.setClinicPhone(form.getClinicPhone());
             clinic.setStatus(Clinic.Status.CLOSED);
-
             return clinic;
         }
     }

@@ -4,9 +4,11 @@ import com.fg.clinicservice.clinic.model.Clinic;
 import com.fg.clinicservice.clinic.model.ClinicDto;
 import com.fg.clinicservice.clinic.model.ClinicForm;
 import com.fg.clinicservice.clinic.model.ClinicMapper;
+import com.fg.clinicservice.config.feign.AuthClient;
+import com.fg.clinicservice.config.feign.UserDto;
 import com.fg.clinicservice.response.ResponseData;
 import com.fg.clinicservice.response.ResponseError;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,19 +17,33 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class ClinicServiceImpl implements IClinicService {
+public class ClinicImpl implements IClinicService {
 
     private final  ClinicRepository clinicRepository;
+    private final AuthClient authClient;
+    private final HttpServletRequest httpServletRequest;
 
-    public ClinicServiceImpl(ClinicRepository clinicRepository) {
+    public ClinicImpl(ClinicRepository clinicRepository, AuthClient authClient, HttpServletRequest httpServletRequest) {
         this.clinicRepository = clinicRepository;
+        this.authClient = authClient;
+        this.httpServletRequest = httpServletRequest;
     }
 
     @Override
     public ResponseData<ClinicDto> createNewClinic(ClinicForm clinicForm) {
+        //lay token
+        String token = httpServletRequest.getHeader("Authorization");
+        //lay userId
+        UserDto user = authClient.getCurrentUser(token).getBody();
+
+        //tao clinic
         Clinic createClinic = ClinicMapper.fromForm(clinicForm);
+        createClinic.setUserId(user.getUserId());
+
+        //luu va tra kq
         Clinic savedClinic = clinicRepository.save(createClinic);
         ClinicDto clinicDto = ClinicMapper.toDto(savedClinic);
+
         return new ResponseData<>(201, "clinic created successfully", clinicDto);
     }
 

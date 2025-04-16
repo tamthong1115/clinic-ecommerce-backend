@@ -17,4 +17,5 @@ public class ClinicDto {
     private String clinicAddress;
     private String clinicPhone;
     private String status;
+    private UUID userId;
 }

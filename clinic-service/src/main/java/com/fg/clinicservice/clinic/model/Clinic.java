@@ -14,7 +14,6 @@ import java.util.*;
 @Table(name = "clinic")
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Clinic {
     @Id
     @UuidGenerator
@@ -39,6 +38,10 @@ public class Clinic {
 
     @OneToMany(mappedBy = "clinic", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ClinicService> clinicServices = new HashSet<>();
+
+    @NotNull
+    @Column(name = "owner",nullable = false)
+    private UUID userId;
 
     public enum Status {
         CLOSED,

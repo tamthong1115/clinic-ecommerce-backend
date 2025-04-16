@@ -46,9 +46,11 @@ public class EService {
     @Column(name = "requires_prescription", nullable = false)
     private boolean requiresPrescription;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean active = true;
 
+    @Builder.Default
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ClinicService> clinicServices = new HashSet<>();
 }
