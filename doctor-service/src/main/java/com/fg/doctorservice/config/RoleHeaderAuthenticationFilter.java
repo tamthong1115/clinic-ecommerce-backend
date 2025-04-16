@@ -1,4 +1,4 @@
-package com.fg.doctorservice.doctor.config;
+package com.fg.doctorservice.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

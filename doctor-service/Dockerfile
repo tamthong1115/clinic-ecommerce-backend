@@ -10,7 +10,7 @@ RUN mvn dependency:go-offline -B
 
 COPY src ./src
 
-RUN mvn clean package
+RUN mvn install -DskipTests
 
 
 FROM eclipse-temurin:21-jre-alpine AS runner

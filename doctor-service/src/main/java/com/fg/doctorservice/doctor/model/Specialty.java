@@ -1,9 +1,6 @@
 package com.fg.doctorservice.doctor.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.UUID;
@@ -17,4 +14,7 @@ public class Specialty {
     private UUID id;
     private String name;
     private String description;
+
+    @OneToOne(mappedBy = "specialty")
+    private Doctor doctor;
 }

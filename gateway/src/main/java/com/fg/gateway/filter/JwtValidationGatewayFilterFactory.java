@@ -52,7 +52,6 @@ public class JwtValidationGatewayFilterFactory extends AbstractGatewayFilterFact
 
                 String authServiceUrl = instances.get(0).getUri().toString() + "/api/v1/validate";
 
-                // Prepare request with the token
                 HttpHeaders headers = new HttpHeaders();
                 headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + authToken);
                 HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
