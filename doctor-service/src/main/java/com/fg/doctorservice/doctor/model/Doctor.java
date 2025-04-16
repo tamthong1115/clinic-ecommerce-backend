@@ -1,9 +1,6 @@
 package com.fg.doctorservice.doctor.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
@@ -18,8 +15,16 @@ public class Doctor {
     private String email;
     private String phone;
     private String gender;
-    private String profile_picture;
-    private Integer experience_years;
+
+    @Column(name = "profile_picture")
+    private String profilePicture;
+
+    @Column(name = "experience_years")
+    private Integer experienceYears;
+
+    @Column(name = "license_number")
+    private String licenseNumber;
+
     private String education;
 
     @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
@@ -30,4 +35,8 @@ public class Doctor {
 
     @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
     private List<DoctorClinic> doctorClinics;
+
+    @OneToOne
+    @JoinColumn(name = "specialty_id")
+    private Specialty specialty;
 }

@@ -27,7 +27,7 @@ public class DoctorMapper {
         response.setEmail(doctor.getEmail());
         response.setPhone(doctor.getPhone());
         response.setGender(doctor.getGender());
-        response.setProfilePicture(doctor.getProfile_picture());
+        response.setProfilePicture(doctor.getProfilePicture());
 
         return response;
     }
@@ -43,8 +43,8 @@ public class DoctorMapper {
         response.setEmail(doctor.getEmail());
         response.setPhone(doctor.getPhone());
         response.setGender(doctor.getGender());
-        response.setProfilePicture(doctor.getProfile_picture());
-        response.setExperienceYears(doctor.getExperience_years());
+        response.setProfilePicture(doctor.getProfilePicture());
+        response.setExperienceYears(doctor.getExperienceYears());
         response.setEducation(doctor.getEducation());
 
         if (doctor.getDoctorCertifications() != null) {
@@ -78,8 +78,8 @@ public class DoctorMapper {
         doctor.setEmail(request.getEmail());
         doctor.setPhone(request.getPhone());
         doctor.setGender(request.getGender());
-        doctor.setProfile_picture(request.getProfilePicture());
-        doctor.setExperience_years(request.getExperienceYears());
+        doctor.setProfilePicture(request.getProfilePicture());
+        doctor.setExperienceYears(request.getExperienceYears());
         doctor.setEducation(request.getEducation());
 
         return doctor;
@@ -112,9 +112,9 @@ public class DoctorMapper {
         DoctorScheduleDTO dto = new DoctorScheduleDTO();
         dto.setId(schedule.getId());
         dto.setClinicId(schedule.getClinicId());
-        dto.setDayOfWeek(schedule.getDay_of_week());
-        dto.setStartTime(schedule.getStart_time());
-        dto.setEndTime(schedule.getEnd_time());
+        dto.setDayOfWeek(schedule.getDayOfWeek());
+        dto.setStartTime(schedule.getStartTime());
+        dto.setEndTime(schedule.getEndTime());
 
         return dto;
     }
@@ -128,8 +128,8 @@ public class DoctorMapper {
         doctor.setEmail(request.getEmail());
         doctor.setPhone(request.getPhone());
         doctor.setGender(request.getGender());
-        doctor.setProfile_picture(request.getProfilePicture());
-        doctor.setExperience_years(request.getExperienceYears());
+        doctor.setProfilePicture(request.getProfilePicture());
+        doctor.setExperienceYears(request.getExperienceYears());
         doctor.setEducation(request.getEducation());
     }
 }

@@ -3,7 +3,7 @@ package com.fg.doctorservice.doctor.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
@@ -11,14 +11,20 @@ import java.util.UUID;
 public class DoctorSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    UUID id;
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
-    UUID clinicId;
-    String day_of_week;
-    Date start_time;
-    Date end_time;
+    private UUID clinicId;
+
+    @Column(name = "day_of_week")
+    private String dayOfWeek;
+
+    @Column(name = "start_time")
+    private LocalTime startTime;
+
+    @Column(name = "end_time")
+    private LocalTime endTime;
 }

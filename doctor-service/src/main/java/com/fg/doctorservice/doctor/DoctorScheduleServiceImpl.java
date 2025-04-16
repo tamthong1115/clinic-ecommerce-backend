@@ -31,9 +31,9 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
         schedule.setId(UUID.randomUUID());
         schedule.setDoctor(doctor);
         schedule.setClinicId(request.getClinicId());
-        schedule.setDay_of_week(request.getDayOfWeek());
-        schedule.setStart_time(request.getStartTime());
-        schedule.setEnd_time(request.getEndTime());
+        schedule.setDayOfWeek(request.getDayOfWeek());
+        schedule.setStartTime(request.getStartTime());
+        schedule.setEndTime(request.getEndTime());
 
         DoctorSchedule savedSchedule = scheduleRepository.save(schedule);
         return doctorMapper.toScheduleDTO(savedSchedule);
@@ -46,9 +46,9 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
                 .orElseThrow(() -> new ResourceNotFoundException("Schedule not found with id: " + scheduleId));
 
         schedule.setClinicId(request.getClinicId());
-        schedule.setDay_of_week(request.getDayOfWeek());
-        schedule.setStart_time(request.getStartTime());
-        schedule.setEnd_time(request.getEndTime());
+        schedule.setDayOfWeek(request.getDayOfWeek());
+        schedule.setStartTime(request.getStartTime());
+        schedule.setEndTime(request.getEndTime());
 
         DoctorSchedule updatedSchedule = scheduleRepository.save(schedule);
         return doctorMapper.toScheduleDTO(updatedSchedule);
