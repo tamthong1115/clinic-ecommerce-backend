@@ -2,22 +2,22 @@ server:
   port: 9000
 
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://accounts.google.com
-          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
-      client:
-        registration:
-          google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            scope:
-              - email
-              - profile
-              - openid
-            redirect-uri: "http://localhost:8765/auth/login/oauth2/code/{registrationId}"
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: https://accounts.google.com
+#          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+#      client:
+#        registration:
+#          google:
+#            client-id: ${GOOGLE_CLIENT_ID}
+#            client-secret: ${GOOGLE_CLIENT_SECRET}
+#            scope:
+#              - email
+#              - profile
+#              - openid
+#            redirect-uri: "http://localhost:8765/auth/login/oauth2/code/{registrationId}"
 #        provider:
 #          google:
 #            authorization-uri: https://accounts.google.com/o/oauth2/auth
@@ -40,7 +40,7 @@ spring:
     show-sql: true
 
 jwt:
-  secret: ${JWT_SECRET:secret}
+  secret: ${JWT_SECRET:9e06f0619a02fb2b3e8f720f475f92deb5eaed07cf116145c29dba6e32596013a4be724b02018216d185b4a8bb114882}
   expiration: 86400000
   refresh-token:
     expiration: 86400000
