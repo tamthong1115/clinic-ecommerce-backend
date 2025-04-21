@@ -62,6 +62,28 @@ services:
       CONFIG_SERVER_URL: http://config-server:8888
       ZIPKIN_HOSTNAME: http://zipkin:9411
 
+  clinic-service:
+    build:
+      context: ./clinic-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      eureka-server:
+        condition: service_healthy
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/clinic
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      EUREKA_HOSTNAME: eureka-server
+      ZIPKIN_HOSTNAME: http://zipkin:9411
 
   doctor-service:
     build:

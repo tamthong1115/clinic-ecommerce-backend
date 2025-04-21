@@ -11,7 +11,7 @@
                     .clinicName(clinic.getClinicName())
                     .clinicAddress(clinic.getClinicAddress())
                     .clinicPhone(clinic.getClinicPhone())
-                    .status(clinic.getStatus().name())
+                    .status(Clinic.Status.valueOf(clinic.getStatus().name()))
                     .build();
         }
 
@@ -24,7 +24,7 @@
             clinic.setClinicPhone(clinicDto.getClinicPhone());
 
             try {
-                clinic.setStatus(Clinic.Status.valueOf(clinicDto.getStatus().toUpperCase()));
+                clinic.setStatus(Clinic.Status.valueOf(String.valueOf(clinicDto.getStatus())));
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("Invalid status: " + clinicDto.getStatus());
             }

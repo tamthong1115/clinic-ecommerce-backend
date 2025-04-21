@@ -13,9 +13,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class ClinicDto {
-    private String clinicName;
-    private String clinicAddress;
-    private String clinicPhone;
-    private String status;
+    private UUID clinicId;
     private UUID userId;
+    private String userName;
+    private String clinicName;
+    private String email;
+    private String clinicPhone;
+    private String clinicAddress;
+    private String description;
+    private String image;
+    private Clinic.Status status;
 }

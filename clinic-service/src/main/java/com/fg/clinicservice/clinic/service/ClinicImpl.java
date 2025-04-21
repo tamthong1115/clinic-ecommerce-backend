@@ -34,11 +34,13 @@ public class ClinicImpl implements IClinicService {
         //lay token
         String token = httpServletRequest.getHeader("Authorization");
         //lay userId
-        UserDto user = authClient.getCurrentUser(token).getBody();
+        UserDto user = authClient.getCurrentUser().getBody();
 
         //tao clinic
         Clinic createClinic = ClinicMapper.fromForm(clinicForm);
         createClinic.setUserId(user.getUserId());
+        createClinic.setUserName(user.getUserName());
+        createClinic.setEmail(user.getEmail());
 
         //luu va tra kq
         Clinic savedClinic = clinicRepository.save(createClinic);

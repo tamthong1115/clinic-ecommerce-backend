@@ -21,16 +21,34 @@ public class Clinic {
     private UUID clinicId;
 
     @NotNull
+    @Column(name = "owner",nullable = false)
+    private UUID userId;
+
+    @NotNull
+    @Column(name = "owner_name", nullable = false)
+    private String userName;
+
+    @NotNull
     @Column( name = "name",nullable = false)
     private String clinicName;
+
+    @NotNull
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @NotNull
+    @Column(name = "phone",nullable = false)
+    private String clinicPhone;
 
     @NotNull
     @Column(name = "address",nullable = false, unique = true)
     private String clinicAddress;
 
     @NotNull
-    @Column(name = "phone",nullable = false)
-    private String clinicPhone;
+    private String description;
+
+    @Column(name = "image", nullable = true)
+    private String image;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 50, nullable = false)
@@ -38,10 +56,6 @@ public class Clinic {
 
     @OneToMany(mappedBy = "clinic", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ClinicService> clinicServices = new HashSet<>();
-
-    @NotNull
-    @Column(name = "owner",nullable = false)
-    private UUID userId;
 
     public enum Status {
         CLOSED,
