@@ -38,5 +38,13 @@ spring:
             - StripPrefix=1
             - JwtValidation
 
+
+        - id: clinic-service
+          uri: lb://clinic-service
+          predicates:
+              - Path=/clinic/**
+          filters:
+              - StripPrefix=1
+              - JwtValidation
 server:
   port: 8765
