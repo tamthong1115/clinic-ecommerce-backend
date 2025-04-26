@@ -1,4 +1,4 @@
-package com.fg.doctorservice.doctor.dto;
+package com.fg.doctorservice.schedule;
 
 import lombok.Data;
 import java.time.LocalTime;

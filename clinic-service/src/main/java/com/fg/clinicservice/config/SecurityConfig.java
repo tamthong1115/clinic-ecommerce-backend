@@ -18,6 +18,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize ->
                         authorize
+                                .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                                 .requestMatchers("/api/v1/doctors/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CLINIC")
                                 .anyRequest().authenticated())
                 .cors(AbstractHttpConfigurer::disable)

@@ -6,15 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
-@Getter
-@Setter
-@RequiredArgsConstructor
-public class UserDTO {
-    private final UUID id;
-    private final String username;
-    private final String email;
-    private final Role role;
-    private final String avatarUrl;
-    private final String phone;
-    private final String address;
+
+/**
+ * Data Transfer Object for User.
+ */
+public record UserDTO(UUID userId, String email, Role role) {
 }

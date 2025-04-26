@@ -24,7 +24,7 @@ public class RoleHeaderAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException{
         List<String> roles = request.getHeader("X-User-Roles") != null ?
                 List.of(request.getHeader("X-User-Roles").split(",")) : List.of();
-        log.debug("X-User-Roles header: {}", request.getHeader("X-User-Roles"));
+        log.info("X-User-Roles header: {}", request.getHeader("X-User-Roles"));
         if (roles.isEmpty() || roles.contains("null") || SecurityContextHolder.getContext().getAuthentication() != null) {
             filterChain.doFilter(request, response);
             return;

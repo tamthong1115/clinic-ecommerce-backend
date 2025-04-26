@@ -9,6 +9,7 @@ import com.fg.authservice.user.UserMapper;
 import com.fg.authservice.user.UserService;
 import com.fg.authservice.util.JwtUtil;
 import io.jsonwebtoken.JwtException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,6 @@ public class AuthService {
 
       UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
       String token = jwtUtil.generateToken(userDetails);
-      List<String> roles = jwtUtil.extractRoles(token);
 
       UserLoginResponseDTO userLoginResponseDTO = userMapper.toUserLoginResponseDTO(user);
       LoginResponseDTO loginResponseDTO = new LoginResponseDTO(token);
@@ -79,6 +79,10 @@ public class AuthService {
     return userService.save(newUser);
   }
 
+  public boolean emailExists(String email) {
+    return userService.existsByEmail(email);
+  }
+
   public boolean validateToken(String token) {
     try {
       UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.extractUsername(token));
@@ -96,5 +100,21 @@ public class AuthService {
 
      return userMapper.toUserDTO(user);
 
+  }
+
+  public UserDTO createUserWithRole(@Valid RegisterRequestWithRoleDTO registerRequestWithRoleDTO) {
+    // Check if the email already exists
+    if (userService.existsByEmail(registerRequestWithRoleDTO.getEmail())) {
+      throw new UserAlreadyExistsException(
+              String.format("User with email %s already exists", registerRequestWithRoleDTO.getEmail())
+      );
+    }
+
+    // Create a new user
+    User newUser = userMapper.toUser(registerRequestWithRoleDTO);
+    newUser.setPassword(passwordEncoder.encode(registerRequestWithRoleDTO.getPassword()));
+    User savedUser = userService.save(newUser);
+
+    return userMapper.toUserDTO(savedUser);
   }
 }

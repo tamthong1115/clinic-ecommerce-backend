@@ -1,4 +1,4 @@
-package com.fg.authservice.user;
+package com.fg.doctorservice.client.user;
 
 public enum Role {
     USER, ADMIN, DOCTOR, PATIENT, CLINIC_OWNER,

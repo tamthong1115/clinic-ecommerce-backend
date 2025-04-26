@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.util.*;
 
@@ -16,20 +14,16 @@ import java.util.*;
 @NoArgsConstructor
 public class Clinic {
     @Id
-    @UuidGenerator
-    @Column(name = "clinic_id")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name="id", updatable = false, nullable = false)
     private UUID clinicId;
 
-    @NotNull
-    @Column(name = "owner",nullable = false)
-    private UUID userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private ClinicOwner owner;
 
     @NotNull
-    @Column(name = "owner_name", nullable = false)
-    private String userName;
-
-    @NotNull
-    @Column( name = "name",nullable = false)
+    @Column(name = "name", nullable = false)
     private String clinicName;
 
     @NotNull
@@ -37,14 +31,13 @@ public class Clinic {
     private String email;
 
     @NotNull
-    @Column(name = "phone",nullable = false)
+    @Column(name = "phone", nullable = false)
     private String clinicPhone;
 
     @NotNull
-    @Column(name = "address",nullable = false, unique = true)
+    @Column(name = "address", nullable = false, unique = true)
     private String clinicAddress;
 
-    @NotNull
     private String description;
 
     @Column(name = "image", nullable = true)

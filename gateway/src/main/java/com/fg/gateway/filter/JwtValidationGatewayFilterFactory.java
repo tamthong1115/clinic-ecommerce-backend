@@ -1,17 +1,24 @@
 package com.fg.gateway.filter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.*;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -19,10 +26,12 @@ public class JwtValidationGatewayFilterFactory extends AbstractGatewayFilterFact
 
     private final RestTemplate restTemplate;
     private final DiscoveryClient discoveryClient;
+    private final ObjectMapper objectMapper;
 
-    public JwtValidationGatewayFilterFactory(RestTemplate restTemplate, DiscoveryClient discoveryClient) {
+    public JwtValidationGatewayFilterFactory(RestTemplate restTemplate, DiscoveryClient discoveryClient, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.discoveryClient = discoveryClient;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -79,17 +88,37 @@ public class JwtValidationGatewayFilterFactory extends AbstractGatewayFilterFact
 
             } catch (HttpClientErrorException.Forbidden ex) {
                 log.error("403 Forbidden: Access denied", ex);
-                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                return exchange.getResponse().setComplete();
+                return setErrorResponse(exchange.getResponse(), HttpStatus.FORBIDDEN,
+                        "Access denied: " + ex.getMessage());
             } catch (HttpClientErrorException.Unauthorized ex) {
                 log.error("401 Unauthorized: Invalid token", ex);
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
+                return setErrorResponse(exchange.getResponse(), HttpStatus.UNAUTHORIZED,
+                        "Invalid authentication token");
             } catch (Exception ex) {
                 log.error("Error during token validation", ex);
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
+                return setErrorResponse(exchange.getResponse(), HttpStatus.UNAUTHORIZED,
+                        "Authentication failed: " + ex.getMessage());
             }
         };
+    }
+
+
+    private Mono<Void> setErrorResponse(ServerHttpResponse response, HttpStatus status, String message) {
+        response.setStatusCode(status);
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> errorDetails = new HashMap<>();
+        errorDetails.put("status", status.value());
+        errorDetails.put("error", status.getReasonPhrase());
+        errorDetails.put("message", message);
+
+        try {
+            byte[] bytes = objectMapper.writeValueAsBytes(errorDetails);
+            DataBuffer buffer = response.bufferFactory().wrap(bytes);
+            return response.writeWith(Mono.just(buffer));
+        } catch (JsonProcessingException e) {
+            log.error("Error writing response", e);
+            return response.setComplete();
+        }
     }
 }

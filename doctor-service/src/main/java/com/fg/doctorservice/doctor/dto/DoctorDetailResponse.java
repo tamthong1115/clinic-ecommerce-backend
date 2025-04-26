@@ -1,5 +1,6 @@
 package com.fg.doctorservice.doctor.dto;
 
+import com.fg.doctorservice.schedule.DoctorScheduleDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import java.util.List;

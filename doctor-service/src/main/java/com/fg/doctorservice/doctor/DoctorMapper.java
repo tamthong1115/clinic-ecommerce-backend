@@ -4,13 +4,12 @@ import com.fg.doctorservice.doctor.dto.DoctorBasicResponse;
 import com.fg.doctorservice.doctor.dto.DoctorDetailResponse;
 import com.fg.doctorservice.doctor.dto.DoctorRequest;
 import com.fg.doctorservice.doctor.dto.DoctorCertificationDTO;
-import com.fg.doctorservice.doctor.dto.DoctorScheduleDTO;
+import com.fg.doctorservice.schedule.DoctorScheduleDTO;
 import com.fg.doctorservice.doctor.model.Doctor;
 import com.fg.doctorservice.doctor.model.DoctorCertification;
-import com.fg.doctorservice.doctor.model.DoctorSchedule;
+import com.fg.doctorservice.schedule.DoctorSchedule;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
