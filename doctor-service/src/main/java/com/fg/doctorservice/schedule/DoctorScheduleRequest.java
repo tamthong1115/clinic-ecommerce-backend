@@ -1,17 +1,13 @@
-package com.fg.doctorservice.doctor.dto;
+package com.fg.doctorservice.schedule;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalTime;
-import java.util.UUID;
 
 @Data
 public class DoctorScheduleRequest {
-    @NotNull(message = "Clinic ID is required")
-    private UUID clinicId;
-
     @NotBlank(message = "Day of week is required")
     private String dayOfWeek;
 

@@ -1,9 +1,15 @@
-package com.fg.doctorservice.doctor;
+package com.fg.doctorservice.doctor.service;
 
+import com.fg.doctorservice.client.user.AuthClient;
+import com.fg.doctorservice.client.user.UserDTO;
+import com.fg.doctorservice.doctor.DoctorMapper;
 import com.fg.doctorservice.doctor.dto.DoctorRequest;
 import com.fg.doctorservice.doctor.dto.DoctorBasicResponse;
 import com.fg.doctorservice.doctor.dto.DoctorDetailResponse;
 import com.fg.doctorservice.doctor.model.Doctor;
+import com.fg.doctorservice.doctor.model.DoctorClinic;
+import com.fg.doctorservice.doctor.repository.DoctorClinicRepository;
+import com.fg.doctorservice.doctor.repository.DoctorRepository;
 import com.fg.doctorservice.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,14 +24,23 @@ import java.util.stream.Collectors;
 public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final DoctorClinicRepository doctorClinicRepository;
     private final DoctorMapper doctorMapper;
+    private final AuthClient authClient;
 
     @Override
     @Transactional
-    public DoctorDetailResponse createDoctor(DoctorRequest doctorRequest) {
+    public DoctorDetailResponse createDoctor(UUID ClinicId, DoctorRequest doctorRequest) {
         Doctor doctor = doctorMapper.toEntity(doctorRequest);
-        doctor.setId(UUID.randomUUID());
         Doctor savedDoctor = doctorRepository.save(doctor);
+
+        if (ClinicId != null) {
+            DoctorClinic doctorClinic = new DoctorClinic();
+            doctorClinic.setDoctor(savedDoctor);
+            doctorClinic.setClinicId(ClinicId);
+            doctorClinicRepository.save(doctorClinic);
+        }
+
         return doctorMapper.toDetailResponse(savedDoctor);
     }
 
@@ -66,34 +81,9 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<DoctorBasicResponse> getDoctorsByGender(String gender) {
-        return doctorRepository.findByGender(gender).stream()
-                .map(doctorMapper::toBasicResponse)
-                .collect(Collectors.toList());
+    @Transactional()
+    public UserDTO getCurrentUser() {
+        return authClient.getCurrentUser().getBody();
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<DoctorBasicResponse> getDoctorsByExperienceYears(Integer experienceYears) {
-        return doctorRepository.findByExperienceYearsGreaterThanEqual(experienceYears).stream()
-                .map(doctorMapper::toBasicResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<DoctorBasicResponse> getDoctorsByEducation(String education) {
-        return doctorRepository.findByEducationContaining(education).stream()
-                .map(doctorMapper::toBasicResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public DoctorDetailResponse getDoctorByEmail(String email) {
-        Doctor doctor = doctorRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with email: " + email));
-        return doctorMapper.toDetailResponse(doctor);
-    }
 }

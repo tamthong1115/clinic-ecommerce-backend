@@ -46,6 +46,22 @@ public class AuthController {
                 .body(new RegisterResponseDTO("User registered successfully"));
     }
 
+    @Operation(summary = "Create a user with a specific role")
+    @PostMapping("/create-with-role")
+    public ResponseEntity<UserDTO> createUserWithRole(
+            @RequestBody @Valid RegisterRequestWithRoleDTO registerRequestWithRoleDTO) {
+
+        UserDTO userDTO = authService.createUserWithRole(registerRequestWithRoleDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
+    }
+
+    @Operation(summary = "Check if email exists in the system")
+    @GetMapping("/email-exists")
+    public ResponseEntity<Boolean> checkEmailExists(@RequestParam String email) {
+        boolean exists = authService.emailExists(email);
+        return ResponseEntity.ok(exists);
+    }
+
     @Operation(summary = "Validate Token and return roles")
     @PostMapping("/validate")
     public ResponseEntity<List<String>> validateToken(

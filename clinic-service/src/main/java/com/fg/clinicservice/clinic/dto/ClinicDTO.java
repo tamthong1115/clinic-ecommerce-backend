@@ -1,6 +1,6 @@
-package com.fg.clinicservice.clinic.model;
+package com.fg.clinicservice.clinic.dto;
 
-import jakarta.validation.constraints.NotNull;
+import com.fg.clinicservice.clinic.model.Clinic;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +12,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ClinicDto {
+public class ClinicDTO {
     private UUID clinicId;
-    private UUID userId;
-    private String userName;
+    private UUID ownerId;
+    private String ownerName;
     private String clinicName;
     private String email;
     private String clinicPhone;

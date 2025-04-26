@@ -1,4 +1,4 @@
-package com.fg.authservice.dto;
+ package com.fg.authservice.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

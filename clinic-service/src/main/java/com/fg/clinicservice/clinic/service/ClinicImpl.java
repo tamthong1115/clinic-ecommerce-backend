@@ -1,14 +1,16 @@
 package com.fg.clinicservice.clinic.service;
 
-import com.fg.clinicservice.clinic.model.Clinic;
-import com.fg.clinicservice.clinic.model.ClinicDto;
-import com.fg.clinicservice.clinic.model.ClinicForm;
-import com.fg.clinicservice.clinic.model.ClinicMapper;
-import com.fg.clinicservice.config.feign.AuthClient;
-import com.fg.clinicservice.config.feign.UserDto;
+import com.fg.clinicservice.client.user.RegisterRequestWithRoleDTO;
+import com.fg.clinicservice.client.user.UserDTO;
+import com.fg.clinicservice.clinic.dto.ClinicOwnerDTO;
+import com.fg.clinicservice.clinic.dto.CreateClinicOwnerRequest;
+import com.fg.clinicservice.clinic.model.*;
+import com.fg.clinicservice.clinic.dto.ClinicDTO;
+import com.fg.clinicservice.client.user.AuthClient;
 import com.fg.clinicservice.response.ResponseData;
 import com.fg.clinicservice.response.ResponseError;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,48 +22,81 @@ import java.util.stream.Collectors;
 public class ClinicImpl implements IClinicService {
 
     private final  ClinicRepository clinicRepository;
+    private final ClinicOwnerRepository clinicOwnerRepository;
     private final AuthClient authClient;
     private final HttpServletRequest httpServletRequest;
 
-    public ClinicImpl(ClinicRepository clinicRepository, AuthClient authClient, HttpServletRequest httpServletRequest) {
+    private static final String DEFAULT_PASSWORD = "ClinicOwner@123";
+    private static final String ROLE_CLINIC_OWNER = "CLINIC_OWNER";
+
+
+    public ClinicImpl(ClinicRepository clinicRepository, ClinicOwnerRepository clinicOwnerRepository, AuthClient authClient, HttpServletRequest httpServletRequest) {
         this.clinicRepository = clinicRepository;
+        this.clinicOwnerRepository = clinicOwnerRepository;
         this.authClient = authClient;
         this.httpServletRequest = httpServletRequest;
     }
 
+
+    public ResponseData<ClinicOwnerDTO> createClinicOwner(CreateClinicOwnerRequest request) {
+        // Check if email exists
+        ResponseEntity<Boolean> emailCheckResponse = authClient.checkEmailExists(request.getEmail());
+        if (Boolean.TRUE.equals(emailCheckResponse.getBody())) {
+            throw new RuntimeException("Email already exists in the system");
+        }
+
+        // Create user account
+        RegisterRequestWithRoleDTO userRequest = RegisterRequestWithRoleDTO.builder()
+                .email(request.getEmail())
+                .password(DEFAULT_PASSWORD)
+                .role(ROLE_CLINIC_OWNER)
+                .build();
+
+        ResponseEntity<UserDTO> userResponse = authClient.createUser(userRequest);
+        if (userResponse.getBody() == null) {
+            throw new RuntimeException("Failed to create user account");
+        }
+
+        // Create clinic owner using mapper
+        ClinicOwner clinicOwner = ClinicOwnerMapper.fromCreateRequest(
+                userResponse.getBody().getUserId(), request
+        );
+
+        ClinicOwner savedOwner = clinicOwnerRepository.save(clinicOwner);
+
+        // Convert to DTO using mapper and wrap in ResponseData
+        ClinicOwnerDTO ownerDTO = ClinicOwnerMapper.toDto(savedOwner);
+        return new ResponseData<>(201, "Clinic owner created successfully", ownerDTO);
+    }
+
     @Override
-    public ResponseData<ClinicDto> createNewClinic(ClinicForm clinicForm) {
-        //lay token
-        String token = httpServletRequest.getHeader("Authorization");
-        //lay userId
-        UserDto user = authClient.getCurrentUser().getBody();
+    public ResponseData<ClinicDTO> createNewClinic(ClinicForm clinicForm) {
+        UserDTO user = authClient.getCurrentUser().getBody();
 
         //tao clinic
         Clinic createClinic = ClinicMapper.fromForm(clinicForm);
-        createClinic.setUserId(user.getUserId());
-        createClinic.setUserName(user.getUserName());
         createClinic.setEmail(user.getEmail());
 
         //luu va tra kq
         Clinic savedClinic = clinicRepository.save(createClinic);
-        ClinicDto clinicDto = ClinicMapper.toDto(savedClinic);
+        ClinicDTO clinicDto = ClinicMapper.toDto(savedClinic);
 
         return new ResponseData<>(201, "clinic created successfully", clinicDto);
     }
 
     @Override
-    public ResponseData<ClinicDto> updateClinic(UUID clinicId,ClinicForm clinicForm) {
+    public ResponseData<ClinicDTO> updateClinic(UUID clinicId, ClinicForm clinicForm) {
         Clinic existingClinic =clinicRepository.findById(clinicId).orElseThrow(()-> new RuntimeException("Clinic not found"));
         ClinicMapper.updateClinicForm(existingClinic,clinicForm);
         Clinic updatedClinic = clinicRepository.save(existingClinic);
-        ClinicDto clinicDto = ClinicMapper.toDto(updatedClinic);
+        ClinicDTO clinicDto = ClinicMapper.toDto(updatedClinic);
         return new ResponseData<>(201, "clinic updated successfully", clinicDto);
     }
 
     @Override
-    public ResponseData<ClinicDto> getClinicById(UUID clinicId) {
+    public ResponseData<ClinicDTO> getClinicById(UUID clinicId) {
         Clinic clinic = clinicRepository.findById(clinicId).orElseThrow(()-> new RuntimeException("clinic not found"));
-        ClinicDto clinicDto = ClinicMapper.toDto(clinic);
+        ClinicDTO clinicDto = ClinicMapper.toDto(clinic);
         return new ResponseData<>(201, "clinic get successfully", clinicDto);
     }
 
@@ -85,8 +120,8 @@ public class ClinicImpl implements IClinicService {
     }
 
     @Override
-    public ResponseData<List<ClinicDto>> getAllClinics() {
-        List<ClinicDto> listClinic = clinicRepository.findAll().stream()
+    public ResponseData<List<ClinicDTO>> getAllClinics() {
+        List<ClinicDTO> listClinic = clinicRepository.findAll().stream()
                 .map(ClinicMapper::toDto)
                 .collect(Collectors.toList());
         return new ResponseData<>(201, "clinic get successfully", listClinic);

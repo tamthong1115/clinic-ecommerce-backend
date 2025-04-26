@@ -1,9 +1,8 @@
-package com.fg.doctorservice.doctor;
+package com.fg.doctorservice.schedule;
 
-import com.fg.doctorservice.doctor.dto.DoctorScheduleRequest;
-import com.fg.doctorservice.doctor.dto.DoctorScheduleDTO;
+import com.fg.doctorservice.doctor.DoctorMapper;
 import com.fg.doctorservice.doctor.model.Doctor;
-import com.fg.doctorservice.doctor.model.DoctorSchedule;
+import com.fg.doctorservice.doctor.repository.DoctorRepository;
 import com.fg.doctorservice.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class DoctorScheduleServiceImpl implements DoctorScheduleService {
+public class ScheduleServiceImpl implements ScheduleService {
 
     private final DoctorScheduleRepository scheduleRepository;
     private final DoctorRepository doctorRepository;
@@ -23,14 +22,14 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
     @Override
     @Transactional
-    public DoctorScheduleDTO createSchedule(UUID doctorId, DoctorScheduleRequest request) {
+    public DoctorScheduleDTO createSchedule(UUID clinicID, UUID doctorId, DoctorScheduleRequest request) {
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + doctorId));
 
         DoctorSchedule schedule = new DoctorSchedule();
         schedule.setId(UUID.randomUUID());
         schedule.setDoctor(doctor);
-        schedule.setClinicId(request.getClinicId());
+        schedule.setClinicId(clinicID);
         schedule.setDayOfWeek(request.getDayOfWeek());
         schedule.setStartTime(request.getStartTime());
         schedule.setEndTime(request.getEndTime());
@@ -41,11 +40,11 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
     @Override
     @Transactional
-    public DoctorScheduleDTO updateSchedule(UUID scheduleId, DoctorScheduleRequest request) {
+    public DoctorScheduleDTO updateSchedule(UUID clinicID,UUID scheduleId, DoctorScheduleRequest request) {
         DoctorSchedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Schedule not found with id: " + scheduleId));
 
-        schedule.setClinicId(request.getClinicId());
+        schedule.setClinicId(clinicID);
         schedule.setDayOfWeek(request.getDayOfWeek());
         schedule.setStartTime(request.getStartTime());
         schedule.setEndTime(request.getEndTime());

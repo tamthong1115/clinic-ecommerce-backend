@@ -1,13 +1,15 @@
 CREATE TABLE IF NOT EXISTS users (
-                                     id UUID PRIMARY KEY,
-                                     username VARCHAR(255),
+    id UUID PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255),
-    email_verified BOOLEAN NOT NULL DEFAULT FALSE,
-    image_url VARCHAR(255),
     role VARCHAR(50) NOT NULL
     );
 
-INSERT INTO users (id, username, email, password, email_verified, image_url, role) VALUES
-                                                                                       ('1975bb3a-9e83-4fbe-ab3e-89d1f62fde17', 'john_doe', 'test@gmail.com', '$2a$10$Nev/K6F/jmTaqeY3S/VvseMYhfWyKR8lU0uZ1.5MBAUlwyjJzRdCO', false, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-tJ9WruDBMHyYM1cY3h-_PCNRgf5OnXZrqw&s', 'USER'),
-                                                                                       ('c96e4f1e-c06c-4211-b835-402921e4a5be', 'jane_doe', 'test1@gmail.com', '$2a$10$Gy/RuliRoN/UbPsXdLHkne1yTsxoixHvF8Btw6bDjtvck45Q0YTkW', false, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-tJ9WruDBMHyYM1cY3h-_PCNRgf5OnXZrqw&s', 'ADMIN');
+
+INSERT INTO users (id, email, password, role)
+VALUES
+    ('c9ab5852-50f6-4989-b71a-2b7986fc70fa', 'user@gmail.com', '$2a$10$jyLIBHNdBTMZ45R60Fo1v.su5kUP/T5hUCZDSbGMzt9oG2PlQge.q', 'USER'),
+    ('eb7c3204-dfbe-4eba-a06c-5a8bade70671', 'doctor@gmail.com', '$2a$10$1oP8BRT0m/L4SavCXkVQKOKn..lWHhJ7.Wl.ZZNn.lexG7YQzNFMS', 'DOCTOR'),
+    ('3f852db7-8d9c-4ba0-af91-b96bf9ddfcb7', 'clinic-owner@gmail.com', '$2a$10$W7fJGx5Ny9QGLpfNNuIjKuBd/7w15iZ4NoCwjFmGMr8KRNjqOmeTK', 'CLINIC_OWNER'),
+    ('be2aabf5-3f13-4b81-8ca0-396f83e3e15c', 'admin@gmail.com', '$2a$10$DYTm9YZ7HvknFxFtVf.cT.AGs7gLjqqeXJYl1XDF93w1Es/a4vvDO', 'ADMIN')
+ON CONFLICT (id) DO NOTHING;

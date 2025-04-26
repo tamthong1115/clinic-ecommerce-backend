@@ -1,13 +1,14 @@
     package com.fg.clinicservice.clinic.model;
 
+    import com.fg.clinicservice.clinic.dto.ClinicDTO;
     import org.springframework.stereotype.Component;
 
     @Component
     public class ClinicMapper {
-        public static ClinicDto toDto (Clinic clinic) {
+        public static ClinicDTO toDto (Clinic clinic) {
             if(clinic==null) return null;
 
-            return ClinicDto.builder()
+            return ClinicDTO.builder()
                     .clinicName(clinic.getClinicName())
                     .clinicAddress(clinic.getClinicAddress())
                     .clinicPhone(clinic.getClinicPhone())
@@ -15,7 +16,7 @@
                     .build();
         }
 
-        public static Clinic fromDto (ClinicDto clinicDto) {
+        public static Clinic fromDto (ClinicDTO clinicDto) {
             if(clinicDto==null) return null;
 
             Clinic clinic = new Clinic();

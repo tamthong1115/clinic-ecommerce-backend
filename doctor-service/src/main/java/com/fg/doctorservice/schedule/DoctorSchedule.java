@@ -1,5 +1,6 @@
-package com.fg.doctorservice.doctor.model;
+package com.fg.doctorservice.schedule;
 
+import com.fg.doctorservice.doctor.model.Doctor;
 import jakarta.persistence.*;
 import lombok.Data;
 
