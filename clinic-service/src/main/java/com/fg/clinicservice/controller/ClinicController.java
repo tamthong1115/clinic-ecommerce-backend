@@ -2,14 +2,12 @@ package com.fg.clinicservice.controller;
 
 
 
-import com.fg.clinicservice.clinic.model.Clinic;
-import com.fg.clinicservice.clinic.model.ClinicDto;
+import com.fg.clinicservice.clinic.dto.ClinicDTO;
 import com.fg.clinicservice.clinic.model.ClinicForm;
 import com.fg.clinicservice.clinic.model.ClinicRequest;
 import com.fg.clinicservice.clinic.service.IClinicService;
 import com.fg.clinicservice.response.ResponseData;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.ws.rs.ForbiddenException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,16 +25,16 @@ public class ClinicController {
 
     @Operation(summary = "Create new clinic for owner")
     @PostMapping("/create")
-    public ResponseEntity<ResponseData<ClinicDto>> CreateClinic(@RequestBody ClinicForm clinicForm) {
-        ResponseData<ClinicDto> response = iClinicService.createNewClinic(clinicForm);
+    public ResponseEntity<ResponseData<ClinicDTO>> CreateClinic(@RequestBody ClinicForm clinicForm) {
+        ResponseData<ClinicDTO> response = iClinicService.createNewClinic(clinicForm);
         return ResponseEntity.ok(response);
     }
 
 
     @Operation(summary = "Update information for clinic")
     @PostMapping("/update/{id}")
-    public ResponseEntity<ResponseData<ClinicDto>> updateClinic(@PathVariable UUID id, @RequestBody ClinicForm clinicForm) {
-        ResponseData<ClinicDto> response = iClinicService.updateClinic(id,clinicForm);
+    public ResponseEntity<ResponseData<ClinicDTO>> updateClinic(@PathVariable UUID id, @RequestBody ClinicForm clinicForm) {
+        ResponseData<ClinicDTO> response = iClinicService.updateClinic(id,clinicForm);
         return ResponseEntity.ok(response);
     }
 

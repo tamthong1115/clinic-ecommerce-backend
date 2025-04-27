@@ -20,9 +20,8 @@ import java.util.UUID;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
-
-    private String username;
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID userId;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -31,12 +30,6 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private Boolean emailVerified = false;
-
-    private String avatarUrl;
-
-    private String address;
-
-    private String phone;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -50,10 +43,6 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
-    }
-
-    public String getUserName() {
-        return username;
     }
 
     @Override

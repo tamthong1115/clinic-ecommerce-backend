@@ -2,6 +2,7 @@ package com.fg.doctorservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -17,9 +18,15 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize ->
                         authorize
-//                                .requestMatchers("/api/v1/login/**", "/api/v1/register/**", "/swagger-ui.html", "/swagger/**", "/v3/**", "/v3/api-docs/**", "/swagger-ui/index.html", "/swagger-ui/**")
-//                                .permitAll()
-                                .requestMatchers("/api/v1/doctors/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_DOCTOR")
+                                .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+                                .requestMatchers("/api/v1/clinic/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CLINIC")
+                                .requestMatchers("/api/v1/doctor/**").hasAnyAuthority("ROLE_ADMIN","ROLE_CLINIC", "ROLE_DOCTOR")
+                                .requestMatchers("/api/v1/patient/**").hasAnyAuthority("ROLE_ADMIN","ROLE_CLINIC", "ROLE_DOCTOR", "ROLE_PATIENT")
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/clinic/**/doctors/**/schedules/**").hasAnyAuthority("ROLE_ADMIN","ROLE_CLINIC")
+                                .requestMatchers(HttpMethod.POST, "/api/v1/clinic/**/doctors/**/schedules/**").hasAnyAuthority("ROLE_ADMIN","ROLE_CLINIC")
+                                .requestMatchers(HttpMethod.GET, "/api/v1/clinic/**/doctors/**/schedules/**").hasAnyAuthority("ROLE_ADMIN","ROLE_CLINIC", "ROLE_DOCTOR")
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/clinic/**/doctors/**/schedules/**").hasAnyAuthority("ROLE_ADMIN","ROLE_CLINIC", "ROLE_DOCTOR")
+                                .requestMatchers("/api/v1/public/**").permitAll()
                                 .anyRequest().authenticated())
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)

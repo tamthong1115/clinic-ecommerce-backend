@@ -1,5 +1,6 @@
 package com.fg.doctorservice.doctor.model;
 
+import com.fg.doctorservice.schedule.DoctorSchedule;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,7 +11,12 @@ import java.util.UUID;
 @Data
 public class Doctor {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Column(name = "user_id")
+    private UUID userId;
+
     private String name;
     private String email;
     private String phone;

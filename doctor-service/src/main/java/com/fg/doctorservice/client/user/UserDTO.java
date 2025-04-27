@@ -1,12 +1,12 @@
-package com.fg.clinicservice.config.feign;
+package com.fg.doctorservice.client.user;
 
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
-public class UserDto {
+public class UserDTO {
     private UUID userId;
-    private String userName;
     private String email;
+    private Role role;
 }

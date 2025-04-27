@@ -1,4 +1,4 @@
-package com.fg.doctorservice.doctor;
+package com.fg.doctorservice.doctor.repository;
 
 import com.fg.doctorservice.doctor.model.Doctor;
 import org.springframework.data.jpa.repository.JpaRepository;
