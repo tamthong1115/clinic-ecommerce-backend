@@ -5,10 +5,13 @@ import com.fg.clinicservice.service.model.EService;
 import com.fg.clinicservice.service.model.ServiceForm;
 import com.fg.clinicservice.service.model.ServiceDto;
 import com.fg.clinicservice.service.model.ServiceMapper;
+import com.fg.clinicservice.speciality.model.Speciality;
+import com.fg.clinicservice.speciality.service.SpecialityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.security.Provider;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,13 +22,21 @@ public class ServiceImpl implements IService {
     @Autowired
     ServiceRepository serviceRepository;
 
-    public ServiceImpl(ServiceRepository serviceRepository) {
+    @Autowired
+    SpecialityRepository specialityRepository;
+
+    public ServiceImpl(ServiceRepository serviceRepository, SpecialityRepository specialityRepository) {
         this.serviceRepository = serviceRepository;
+        this.specialityRepository = specialityRepository;
     }
 
     @Override
     public ResponseData<ServiceDto> createService(ServiceForm form) {
-        EService createService = ServiceMapper.formForm(form);
+
+        Speciality speciality = specialityRepository.findById(form.getSpecialityId())
+                .orElseThrow(() -> new RuntimeException("Chuyên khoa không tồn tại"));
+
+        EService createService = ServiceMapper.formForm(form,speciality);
         EService saveService = serviceRepository.save(createService);
         ServiceDto serviceDto = ServiceMapper.toDto(saveService);
         return new ResponseData<>(201, "Service created successfully", serviceDto);
@@ -33,19 +44,26 @@ public class ServiceImpl implements IService {
     }
 
     @Override
-    public ResponseData<ServiceDto> updateService(UUID serviceId, ServiceForm Form) {
-        EService service = serviceRepository.findById(serviceId).orElseThrow(()-> new RuntimeException("Service not found"));
-        ServiceMapper.updateServiceForm(service, Form);
+    public ResponseData<ServiceDto> updateService(UUID serviceId, ServiceForm form) {
+        EService service = serviceRepository.findById(serviceId)
+                .orElseThrow(()-> new RuntimeException("Service not found"));
+
+        Speciality speciality = null;
+        if (form.getSpecialityId() != null) {
+            speciality = specialityRepository.findById(form.getSpecialityId())
+                    .orElseThrow(() -> new RuntimeException("Chuyên khoa không tồn tại"));
+        }
+        ServiceMapper.updateServiceForm(service, form, speciality);
         EService saveService = serviceRepository.save(service);
         ServiceDto serviceDto = ServiceMapper.toDto(saveService);
-        return new ResponseData<>(201, "Service updated successfully", serviceDto);
+        return new ResponseData<>(200, "Service updated successfully", serviceDto);
     }
 
     @Override
     public ResponseData<ServiceDto> getServiceById(UUID serviceId) {
         EService service = serviceRepository.findById(serviceId).orElseThrow(()-> new RuntimeException("Service not found"));
         ServiceDto serviceDto = ServiceMapper.toDto(service);
-        return new ResponseData<>(201, "Service found", serviceDto);
+        return new ResponseData<>(200, "Service found", serviceDto);
     }
 
     @Override
@@ -53,6 +71,14 @@ public class ServiceImpl implements IService {
         List<ServiceDto> listServices = serviceRepository.findAll().stream()
                 .map(ServiceMapper::toDto)
                 .collect(Collectors.toList());
-        return  new ResponseData<>(201,"Service get successfully", listServices);
+        return  new ResponseData<>(200,"Service get successfully", listServices);
+    }
+
+    @Override
+    public ResponseData<List<ServiceDto>> getAllServiceBySpeciality(UUID specialityId) {
+        List<ServiceDto> listServices = serviceRepository.findAllBySpecialityId(specialityId).stream()
+                .map(ServiceMapper::toDto)
+                .collect(Collectors.toList());
+        return  new ResponseData<>(200,"Service get successfully", listServices);
     }
 }

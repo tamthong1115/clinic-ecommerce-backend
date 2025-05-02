@@ -36,7 +36,7 @@ public class SpecialRequirementImpl implements SpecialRequirementService {
                 .orElseThrow(() -> new RuntimeException("Special Requirement not found"));
         SpecialRequirementDto specialRequirementDto = SpecialRequirementMapper.toDto(specialRequirement);
 
-        return new ResponseData<>(201,"Get special requirement successfully", specialRequirementDto);
+        return new ResponseData<>(200,"Get special requirement successfully", specialRequirementDto);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class SpecialRequirementImpl implements SpecialRequirementService {
         List<SpecialRequirementDto> listSR = specialRequirementRepository.findByServiceId(serviceId).stream()
                 .map(SpecialRequirementMapper::toDto)
                 .collect(Collectors.toList());
-        return new ResponseData<>(201,"Get special requirement successfully", listSR);
+        return new ResponseData<>(200,"Get special requirement successfully", listSR);
     }
 
     @Override
@@ -67,21 +67,23 @@ public class SpecialRequirementImpl implements SpecialRequirementService {
 
     @Override
     public ResponseData<SpecialRequirementDto> createNewSpecialRequirement(SpecialRequirementForm form) {
+        EService service = serviceRepository.findById(form.getServiceId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy service"));
         SpecialRequirement specialRequirement = new SpecialRequirement();
-        specialRequirement.setServiceId(form.getServiceId());
+        specialRequirement.setService(service);
         specialRequirement.setRequirement(form.getRequirement());
-        specialRequirementRepository.save(specialRequirement);
-
-        SpecialRequirementDto specialRequirementDto = SpecialRequirementMapper.toDto(specialRequirement);
-        return new ResponseData<>(201,"Create special requirement successfully", specialRequirementDto);
+        SpecialRequirement saved = specialRequirementRepository.save(specialRequirement);
+        SpecialRequirementDto dto = SpecialRequirementMapper.toDto(saved);
+        return new ResponseData<>(201, "Create special requirement successfully", dto);
     }
 
     @Override
     public ResponseData<SpecialRequirementDto> updateSpecialRequirement(UUID id, SpecialRequirementForm form) {
-        SpecialRequirement exsit = specialRequirementRepository.findById(id).orElseThrow(() -> new RuntimeException("Special Requirement not found"));
+        SpecialRequirement exsit = specialRequirementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Special Requirement not found"));
         exsit.setRequirement(form.getRequirement());
         specialRequirementRepository.save(exsit);
         SpecialRequirementDto specialRequirementDto = SpecialRequirementMapper.toDto(exsit);
-        return new ResponseData<>(201,"Update special requirement successfully", specialRequirementDto);
+        return new ResponseData<>(200,"Update special requirement successfully", specialRequirementDto);
     }
 }

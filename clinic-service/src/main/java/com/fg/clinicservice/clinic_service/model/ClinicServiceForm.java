@@ -9,5 +9,5 @@ import java.util.UUID;
 public class ClinicServiceForm {
     private UUID clinicId;
     private UUID serviceId;
-    private Status status;
+    private ClinicService.Status status = ClinicService.Status.ACTIVE;
 }

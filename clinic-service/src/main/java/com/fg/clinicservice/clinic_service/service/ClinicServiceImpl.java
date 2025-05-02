@@ -42,7 +42,7 @@ public class ClinicServiceImpl implements IClinicService {
         clinicService.setId(clinicServiceId);
         clinicService.setClinic(clinic);
         clinicService.setService(service);
-        clinicService.setStatus(clinicServiceForm.getStatus() != null ? clinicServiceForm.getStatus() : ClinicService.Status.ACTIVE);
+        clinicService.setStatus(ClinicService.Status.ACTIVE);
 
         clinicServiceRepository.save(clinicService);
 

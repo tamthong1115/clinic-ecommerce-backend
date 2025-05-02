@@ -12,4 +12,5 @@ public interface IService {
     ResponseData<ServiceDto> updateService(UUID serviceId, ServiceForm Form);
     ResponseData<ServiceDto> getServiceById(UUID serviceId);
     ResponseData<List<ServiceDto>> getAllService();
+    ResponseData<List<ServiceDto>> getAllServiceBySpeciality(UUID specialityId);
 }

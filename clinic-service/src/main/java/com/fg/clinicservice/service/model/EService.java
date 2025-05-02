@@ -1,6 +1,7 @@
 package com.fg.clinicservice.service.model;
 
 import com.fg.clinicservice.clinic_service.model.ClinicService;
+import com.fg.clinicservice.speciality.model.Speciality;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -27,12 +28,13 @@ public class EService {
     private String serviceName;
 
     @NotNull
-    @Column(nullable = false)
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "speciality_id")
+    private Speciality speciality;
 
     @NotNull
-    @Column(nullable = false )
-    private String category;
+    @Column(nullable = false)
+    private String description;
 
     @NotNull
     @Column(nullable = false , precision = 10 , scale = 2)
@@ -53,4 +55,5 @@ public class EService {
     @Builder.Default
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ClinicService> clinicServices = new HashSet<>();
+
 }
