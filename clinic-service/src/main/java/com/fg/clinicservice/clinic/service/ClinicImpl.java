@@ -90,14 +90,14 @@ public class ClinicImpl implements IClinicService {
         ClinicMapper.updateClinicForm(existingClinic,clinicForm);
         Clinic updatedClinic = clinicRepository.save(existingClinic);
         ClinicDTO clinicDto = ClinicMapper.toDto(updatedClinic);
-        return new ResponseData<>(201, "clinic updated successfully", clinicDto);
+        return new ResponseData<>(200, "clinic updated successfully", clinicDto);
     }
 
     @Override
     public ResponseData<ClinicDTO> getClinicById(UUID clinicId) {
         Clinic clinic = clinicRepository.findById(clinicId).orElseThrow(()-> new RuntimeException("clinic not found"));
         ClinicDTO clinicDto = ClinicMapper.toDto(clinic);
-        return new ResponseData<>(201, "clinic get successfully", clinicDto);
+        return new ResponseData<>(200, "clinic get successfully", clinicDto);
     }
 
 
@@ -124,7 +124,7 @@ public class ClinicImpl implements IClinicService {
         List<ClinicDTO> listClinic = clinicRepository.findAll().stream()
                 .map(ClinicMapper::toDto)
                 .collect(Collectors.toList());
-        return new ResponseData<>(201, "clinic get successfully", listClinic);
+        return new ResponseData<>(200, "clinic get successfully", listClinic);
     }
 
 

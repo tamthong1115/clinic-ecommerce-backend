@@ -17,8 +17,9 @@ import java.util.UUID;
 public class ServiceDto {
     private UUID serviceId;
     private String serviceName;
+    private UUID specialityId;
+    private String specialityName;
     private String description;
-    private String category;
     private BigDecimal price;
     private LocalTime duration;
     private Boolean requiresPrescription;

@@ -5,14 +5,20 @@
 
     @Component
     public class ClinicMapper {
-        public static ClinicDTO toDto (Clinic clinic) {
-            if(clinic==null) return null;
+        public static ClinicDTO toDto(Clinic clinic) {
+            if (clinic == null) return null;
 
             return ClinicDTO.builder()
+                    .clinicId(clinic.getClinicId())
+                    .ownerId(clinic.getOwner() != null ? clinic.getOwner().getOwnerId() : null)
+                    .ownerName(clinic.getOwner() != null ? clinic.getOwner().getLastName() : null)
                     .clinicName(clinic.getClinicName())
-                    .clinicAddress(clinic.getClinicAddress())
+                    .email(clinic.getOwner() != null ? clinic.getOwner().getEmail() : null)
                     .clinicPhone(clinic.getClinicPhone())
-                    .status(Clinic.Status.valueOf(clinic.getStatus().name()))
+                    .clinicAddress(clinic.getClinicAddress())
+                    .description(clinic.getDescription())
+                    .image(clinic.getImage())
+                    .status(clinic.getStatus())
                     .build();
         }
 
@@ -39,7 +45,7 @@
             clinic.setClinicName(clinicForm.getClinicName());
             clinic.setClinicAddress(clinicForm.getClinicAddress());
             clinic.setClinicPhone(clinicForm.getClinicPhone());
-            clinic.setStatus(Clinic.Status.CLOSED);
+            clinic.setStatus(clinicForm.getStatus());
         }
 
         public static Clinic fromForm(ClinicForm form) {

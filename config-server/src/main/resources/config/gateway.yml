@@ -17,6 +17,7 @@ spring:
               - POST
               - PUT
               - DELETE
+              - PATCH
               - OPTIONS
             allowed-headers:
               - "*"
@@ -42,9 +43,17 @@ spring:
         - id: clinic-service
           uri: lb://clinic-service
           predicates:
-              - Path=/clinic/**
+            - Path=/clinic/**
           filters:
-              - StripPrefix=1
-              - JwtValidation
+            - StripPrefix=1
+            - JwtValidation
+
+        - id: public-clinic
+          uri: lb://clinic-service
+          predicates:
+            - Path=/public/**
+          filters:
+            - StripPrefix=1
+
 server:
   port: 8765
