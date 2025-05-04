@@ -1,7 +1,7 @@
 package com.fg.clinicservice.clinic_service.model;
 
 import com.fg.clinicservice.clinic.model.Clinic;
-import com.fg.clinicservice.service.model.EService;
+import com.fg.clinicservice.service_clinic.model.EService;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

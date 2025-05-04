@@ -1,6 +1,6 @@
 package com.fg.clinicservice.speciality.model;
 
-import com.fg.clinicservice.service.model.EService;
+import com.fg.clinicservice.service_clinic.model.EService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

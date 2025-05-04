@@ -22,7 +22,8 @@ public class DoctorMapper {
 
         DoctorBasicResponse response = new DoctorBasicResponse();
         response.setId(doctor.getId());
-        response.setName(doctor.getName());
+        response.setFirstName(doctor.getFirstName());
+        response.setLastName(doctor.getLastName());
         response.setEmail(doctor.getEmail());
         response.setPhone(doctor.getPhone());
         response.setGender(doctor.getGender());
@@ -38,7 +39,8 @@ public class DoctorMapper {
 
         DoctorDetailResponse response = new DoctorDetailResponse();
         response.setId(doctor.getId());
-        response.setName(doctor.getName());
+        response.setFirstName(doctor.getFirstName());
+        response.setLastName(doctor.getLastName());
         response.setEmail(doctor.getEmail());
         response.setPhone(doctor.getPhone());
         response.setGender(doctor.getGender());
@@ -73,7 +75,8 @@ public class DoctorMapper {
         }
 
         Doctor doctor = new Doctor();
-        doctor.setName(request.getName());
+        doctor.setFirstName(request.getFirstName());
+        doctor.setLastName(request.getLastName());
         doctor.setEmail(request.getEmail());
         doctor.setPhone(request.getPhone());
         doctor.setGender(request.getGender());
@@ -123,7 +126,8 @@ public class DoctorMapper {
             return;
         }
 
-        doctor.setName(request.getName());
+        doctor.setFirstName(request.getFirstName());
+        doctor.setLastName(request.getLastName());
         doctor.setEmail(request.getEmail());
         doctor.setPhone(request.getPhone());
         doctor.setGender(request.getGender());

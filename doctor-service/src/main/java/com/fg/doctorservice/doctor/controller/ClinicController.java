@@ -19,6 +19,7 @@ public class ClinicController {
         this.doctorService = doctorService;
     }
 
+
     @PostMapping("/{clinic_id}")
     public ResponseEntity<DoctorDetailResponse> createDoctorWithClinicId(
             @PathVariable UUID clinic_id,
