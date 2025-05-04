@@ -4,13 +4,12 @@ import com.fg.clinicservice.clinic.model.Clinic;
 import com.fg.clinicservice.clinic.service.ClinicRepository;
 import com.fg.clinicservice.clinic_service.model.*;
 import com.fg.clinicservice.response.ResponseData;
-import com.fg.clinicservice.service.model.EService;
-import com.fg.clinicservice.service.service.ServiceRepository;
+import com.fg.clinicservice.service_clinic.model.EService;
+import com.fg.clinicservice.service_clinic.service.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
