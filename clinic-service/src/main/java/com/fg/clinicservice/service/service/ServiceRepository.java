@@ -1,7 +1,8 @@
 package com.fg.clinicservice.service.service;
 
 import com.fg.clinicservice.service.model.EService;
-import com.fg.clinicservice.speciality.model.SpecialityForm;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +21,6 @@ public interface ServiceRepository extends JpaRepository<EService, UUID> {
     void updateServiceActiveStatus(@Param("serviceId") UUID serviceId, @Param("active") boolean active);
 
     @Query("SELECT s FROM EService s WHERE s.speciality.specialityId = :specialityId")
-    List<EService> findAllBySpecialityId(@Param("specialityId") UUID specialityId);
+    Page<EService> findAllBySpecialityId(@Param("specialityId") UUID specialityId, Pageable pageable);
 
 }

@@ -8,6 +8,8 @@ import com.fg.clinicservice.service.model.ServiceMapper;
 import com.fg.clinicservice.speciality.model.Speciality;
 import com.fg.clinicservice.speciality.service.SpecialityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -67,18 +69,14 @@ public class ServiceImpl implements IService {
     }
 
     @Override
-    public ResponseData<List<ServiceDto>> getAllService() {
-        List<ServiceDto> listServices = serviceRepository.findAll().stream()
-                .map(ServiceMapper::toDto)
-                .collect(Collectors.toList());
-        return  new ResponseData<>(200,"Service get successfully", listServices);
+    public Page<ServiceDto> getAllServices(Pageable pageable) {
+        Page<EService> servicePage = serviceRepository.findAll(pageable);
+        return servicePage.map(ServiceMapper::toDto);
     }
 
     @Override
-    public ResponseData<List<ServiceDto>> getAllServiceBySpeciality(UUID specialityId) {
-        List<ServiceDto> listServices = serviceRepository.findAllBySpecialityId(specialityId).stream()
-                .map(ServiceMapper::toDto)
-                .collect(Collectors.toList());
-        return  new ResponseData<>(200,"Service get successfully", listServices);
+    public Page<ServiceDto> getAllServiceBySpeciality(UUID specialityId, Pageable pageable) {
+        Page<EService> listServices = serviceRepository.findAllBySpecialityId(specialityId, pageable);
+        return listServices.map(ServiceMapper::toDto);
     }
 }

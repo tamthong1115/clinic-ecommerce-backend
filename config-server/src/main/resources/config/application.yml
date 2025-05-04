@@ -34,3 +34,6 @@ application:
   frontend:
     url: http://localhost:5173
 
+
+
+CLOUDINARY_URL: cloudinary://662736959479375:662736959479375@dulzekaen

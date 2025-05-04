@@ -31,7 +31,7 @@ public class ClinicController {
 
     @Operation(summary = "Update information for clinic")
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseData<ClinicDTO>> updateClinic(@PathVariable UUID id, @RequestBody ClinicForm clinicForm) {
+    public ResponseEntity<ResponseData<ClinicDTO>> updateClinic(@PathVariable UUID id, @ModelAttribute  ClinicForm clinicForm) {
         ResponseData<ClinicDTO> response = iClinicService1.updateClinic(id,clinicForm);
         return ResponseEntity.ok(response);
     }

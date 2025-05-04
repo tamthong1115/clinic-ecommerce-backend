@@ -7,8 +7,10 @@ import com.fg.clinicservice.clinic.dto.CreateClinicOwnerRequest;
 import com.fg.clinicservice.clinic.model.*;
 import com.fg.clinicservice.clinic.dto.ClinicDTO;
 import com.fg.clinicservice.client.user.AuthClient;
+import com.fg.clinicservice.config.CloudinaryService;
 import com.fg.clinicservice.response.ResponseData;
 import com.fg.clinicservice.response.ResponseError;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ClinicImpl implements IClinicService {
+    @Resource
+    CloudinaryService cloudinaryService;
 
     private final  ClinicRepository clinicRepository;
     private final ClinicOwnerRepository clinicOwnerRepository;
@@ -87,6 +91,10 @@ public class ClinicImpl implements IClinicService {
     @Override
     public ResponseData<ClinicDTO> updateClinic(UUID clinicId, ClinicForm clinicForm) {
         Clinic existingClinic =clinicRepository.findById(clinicId).orElseThrow(()-> new RuntimeException("Clinic not found"));
+        if(clinicForm.getFile() != null && clinicForm.getFile().isEmpty()) {
+            String upLoadImageUrl = cloudinaryService.uploadImage(clinicForm.getFile(), "clinic-images");
+            existingClinic.setImage(upLoadImageUrl);
+        }
         ClinicMapper.updateClinicForm(existingClinic,clinicForm);
         Clinic updatedClinic = clinicRepository.save(existingClinic);
         ClinicDTO clinicDto = ClinicMapper.toDto(updatedClinic);

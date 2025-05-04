@@ -40,8 +40,9 @@ public class Clinic {
 
     private String description;
 
+    @ElementCollection
     @Column(name = "image", nullable = true)
-    private String image;
+    private List<String> images = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 50, nullable = false)
