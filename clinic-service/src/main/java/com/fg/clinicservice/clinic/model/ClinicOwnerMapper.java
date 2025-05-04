@@ -21,7 +21,6 @@ public class ClinicOwnerMapper {
         owner.setCity(request.getCity());
         owner.setState(request.getState());
         owner.setPostalCode(request.getPostalCode());
-        owner.setLicenseNumber(request.getLicenseNumber());
         owner.setProfileImageUrl(request.getProfileImageUrl());
         return owner;
     }
