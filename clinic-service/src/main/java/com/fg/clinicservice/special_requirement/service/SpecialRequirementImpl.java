@@ -1,15 +1,13 @@
 package com.fg.clinicservice.special_requirement.service;
 
 import com.fg.clinicservice.response.ResponseData;
-import com.fg.clinicservice.service.model.EService;
-import com.fg.clinicservice.service.service.ServiceRepository;
+import com.fg.clinicservice.service_clinic.model.EService;
+import com.fg.clinicservice.service_clinic.service.ServiceRepository;
 import com.fg.clinicservice.special_requirement.model.SpecialRequirement;
 import com.fg.clinicservice.special_requirement.model.SpecialRequirementDto;
 import com.fg.clinicservice.special_requirement.model.SpecialRequirementForm;
 import com.fg.clinicservice.special_requirement.model.SpecialRequirementMapper;
-import com.fg.clinicservice.special_requirement.service.SpecialRequirementService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

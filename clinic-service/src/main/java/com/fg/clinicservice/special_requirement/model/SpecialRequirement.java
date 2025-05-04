@@ -1,12 +1,11 @@
 package com.fg.clinicservice.special_requirement.model;
 
 
-import com.fg.clinicservice.service.model.EService;
+import com.fg.clinicservice.service_clinic.model.EService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;

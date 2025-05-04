@@ -3,8 +3,6 @@ package com.fg.clinicservice.clinic_service.service;
 import com.fg.clinicservice.clinic_service.model.ClinicServiceDto;
 import com.fg.clinicservice.clinic_service.model.ClinicServiceForm;
 import com.fg.clinicservice.response.ResponseData;
-import com.fg.clinicservice.service.model.ServiceDto;
-import com.fg.clinicservice.service.model.ServiceForm;
 
 import java.util.List;
 import java.util.UUID;

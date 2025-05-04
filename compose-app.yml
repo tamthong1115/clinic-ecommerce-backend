@@ -1,174 +1,196 @@
-  services:
-    config-server:
-      build:
-        context: ./config-server
-        dockerfile: Dockerfile
-      ports:
-        - "8888:8888"
-      networks:
-        - clinic-ecommerce-net
-      restart: unless-stopped
-      environment:
-        EUREKA_SERVER_URL: http://eureka-server:8761/eureka
-        EUREKA_HOSTNAME: eureka-server
-        ZIPKIN_HOSTNAME: http://zipkin:9411
-      healthcheck:
-        test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
-        interval: 30s
-        timeout: 10s
-        retries: 5
+services:
+  config-server:
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      EUREKA_HOSTNAME: eureka-server
+      ZIPKIN_HOSTNAME: http://zipkin:9411
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
-    eureka-server:
-      build:
-        context: ./eureka-server
-        dockerfile: Dockerfile
-      ports:
-        - "8761:8761"
-      networks:
-        - clinic-ecommerce-net
-      restart: unless-stopped
-      depends_on:
-        config-server:
-          condition: service_healthy
-      environment:
-        CONFIG_SERVER_URL: http://config-server:8888
-        EUREKA_SERVER_URL: http://eureka-server:8761/eureka
-        EUREKA_HOSTNAME: eureka-server
-        ZIPKIN_HOSTNAME: http://zipkin:9411
-      healthcheck:
-        test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
-        interval: 30s
-        timeout: 10s
-        retries: 5
-
-
-    gateway:
-      build:
-        context: ./gateway
-        dockerfile: Dockerfile
-      ports:
-        - "8765:8765"
-      networks:
-        - clinic-ecommerce-net
-      restart: unless-stopped
-      depends_on:
-        config-server:
-          condition: service_healthy
-        eureka-server:
-          condition: service_healthy
-      environment:
-        EUREKA_SERVER_URL: http://eureka-server:8761/eureka
-        EUREKA_HOSTNAME: eureka-server
-        CONFIG_SERVER_URL: http://config-server:8888
-        ZIPKIN_HOSTNAME: http://zipkin:9411
-
-    clinic-service:
-      build:
-        context: ./clinic-service
-        dockerfile: Dockerfile
-      ports:
-        - "8000:8000"
-      networks:
-        - clinic-ecommerce-net
-      restart: unless-stopped
-      depends_on:
-        config-server:
-          condition: service_healthy
-        postgres:
-          condition: service_started
-        eureka-server:
-          condition: service_healthy
-      environment:
-        CONFIG_SERVER_URL: http://config-server:8888
-        SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/clinic
-        EUREKA_SERVER_URL: http://eureka-server:8761/eureka
-        EUREKA_HOSTNAME: eureka-server
-        ZIPKIN_HOSTNAME: http://zipkin:9411
-
-    doctor-service:
-      build:
-        context: ./doctor-service
-        dockerfile: Dockerfile
-      ports:
-        - "8050:8050"
-      networks:
-        - clinic-ecommerce-net
-      restart: unless-stopped
-      depends_on:
-        config-server:
-          condition: service_healthy
-        postgres:
-          condition: service_started
-        eureka-server:
-          condition: service_healthy
-      environment:
-        CONFIG_SERVER_URL: http://config-server:8888
-        SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/doctor
-        EUREKA_SERVER_URL: http://eureka-server:8761/eureka
-        EUREKA_HOSTNAME: eureka-server
-        ZIPKIN_HOSTNAME: http://zipkin:9411
-
-    auth-service:
-      build:
-        context: ./auth-service
-        dockerfile: Dockerfile
-      ports:
-        - "9000:9000"
-      networks:
-        - clinic-ecommerce-net
-      restart: unless-stopped
-      depends_on:
-        config-server:
-          condition: service_healthy
-        postgres:
-          condition: service_healthy
-        eureka-server:
-          condition: service_healthy
-      environment:
-        CONFIG_SERVER_URL: http://config-server:8888
-        EUREKA_SERVER_URL: http://eureka-server:8761/eureka
-        EUREKA_HOSTNAME: eureka-server
-        SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user
-        ZIPKIN_HOSTNAME: http://zipkin:9411
-        JWT_SECRET: ${JWT_SECRET}
-      env_file:
-        - .env
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+    depends_on:
+      config-server:
+        condition: service_healthy
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      EUREKA_HOSTNAME: eureka-server
+      ZIPKIN_HOSTNAME: http://zipkin:9411
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 
-    postgres:
-      container_name: clinic_ecommerce_pg_sql
-      build:
-        context: ./database
-        dockerfile: Dockerfile
-      environment:
-        POSTGRES_USER: ${POSTGRES_USER:-postgres}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-        PGDATA: /var/lib/postgresql/data
-      volumes:
-        - postgres:/var/lib/postgresql/data
-      ports:
-        - "5432:5432"
-      networks:
-        - clinic-ecommerce-net
-      restart: unless-stopped
-      healthcheck:
-        test: [ "CMD-SHELL", "pg_isready -d postgres -U $${POSTGRES_USER}"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8765:8765"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      EUREKA_HOSTNAME: eureka-server
+      CONFIG_SERVER_URL: http://config-server:8888
+      ZIPKIN_HOSTNAME: http://zipkin:9411
 
-    zipkin:
-      image: openzipkin/zipkin:3
-      container_name: zipkin
-      ports:
-        - "9411:9411"
-      networks:
-        - clinic-ecommerce-net
-      restart: unless-stopped
+  clinic-service:
+    build:
+      context: ./clinic-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      eureka-server:
+        condition: service_healthy
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/clinic
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      EUREKA_HOSTNAME: eureka-server
+      ZIPKIN_HOSTNAME: http://zipkin:9411
 
-  networks:
-    clinic-ecommerce-net:
-      driver: bridge
+  doctor-service:
+    build:
+      context: ./doctor-service
+      dockerfile: Dockerfile
+    ports:
+      - "8050:8050"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      eureka-server:
+        condition: service_healthy
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/doctor
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      EUREKA_HOSTNAME: eureka-server
+      ZIPKIN_HOSTNAME: http://zipkin:9411
 
-  volumes:
-    postgres:
+  patient-service:
+    build:
+      context: ./patient-service
+      dockerfile: Dockerfile
+    ports:
+      - "8100:8100"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      eureka-server:
+        condition: service_healthy
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/patient_appointment
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      EUREKA_HOSTNAME: eureka-server
+      ZIPKIN_HOSTNAME: http://zipkin:9411
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      EUREKA_HOSTNAME: eureka-server
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user
+      ZIPKIN_HOSTNAME: http://zipkin:9411
+      JWT_SECRET: ${JWT_SECRET}
+    env_file:
+      - .env
+
+
+  postgres:
+    container_name: clinic_ecommerce_pg_sql
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  zipkin:
+    image: openzipkin/zipkin:3
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+
+networks:
+  clinic-ecommerce-net:
+    driver: bridge
+
+volumes:
+  postgres:

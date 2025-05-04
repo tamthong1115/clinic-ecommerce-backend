@@ -1,4 +1,4 @@
-package com.fg.clinicservice.clinic.dto;
+package com.fg.doctorservice.doctor.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class CreateClinicOwnerRequest {
+public class CreateDoctorRequest {
     private String firstName;
     private String lastName;
     private String email;
@@ -22,5 +22,5 @@ public class CreateClinicOwnerRequest {
     private String state;
     private String postalCode;
     private String profileImageUrl;
-
+    private String licenseNumber;
 }
