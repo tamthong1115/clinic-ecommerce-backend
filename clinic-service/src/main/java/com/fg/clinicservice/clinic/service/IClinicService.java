@@ -17,4 +17,5 @@ public interface IClinicService {
     ResponseData<ClinicDTO> getClinicById(UUID clinicId);
     ResponseData<String> updateClinicStatus(UUID clinicId, Clinic.Status status);
     ResponseData<List<ClinicDTO>> getAllClinics();
+    ResponseData<List<ClinicDTO>> getClinicsByOwnerId();
 }

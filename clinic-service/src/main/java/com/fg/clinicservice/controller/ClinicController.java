@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -27,6 +28,13 @@ public class ClinicController {
     ) {
         this.iClinicService1 = iClinicService1;
         this.iClinicService2 = iClinicService2;
+    }
+
+    @Operation(summary = "Get clinic by owner Id")
+    @GetMapping("/get-by-owner")
+    public ResponseEntity<ResponseData<List<ClinicDTO>>> getClinicById() {
+        ResponseData<List<ClinicDTO>> response = iClinicService1.getClinicsByOwnerId();
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Update information for clinic")

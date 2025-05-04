@@ -82,6 +82,12 @@ public class ClinicImpl implements IClinicService {
         Clinic createClinic = ClinicMapper.fromForm(clinicForm);
         createClinic.setEmail(user.getEmail());
 
+        //Upload anh
+        if(clinicForm.getFile() != null && !clinicForm.getFile().isEmpty()) {
+            List<String> upLoadImageurls = cloudinaryService.uploadClinicRoomImage(clinicForm.getFile());
+            createClinic.setImages(upLoadImageurls);
+        }
+
         //luu va tra kq
         Clinic savedClinic = clinicRepository.save(createClinic);
         ClinicDTO clinicDto = ClinicMapper.toDto(savedClinic);
@@ -91,10 +97,12 @@ public class ClinicImpl implements IClinicService {
 
     @Override
     public ResponseData<ClinicDTO> updateClinic(UUID clinicId, ClinicForm clinicForm) {
-        Clinic existingClinic =clinicRepository.findById(clinicId).orElseThrow(()-> new RuntimeException("Clinic not found"));
-        if(clinicForm.getFile() != null && clinicForm.getFile().isEmpty()) {
-            String upLoadImageUrl = cloudinaryService.uploadClinicRoomImage(clinicForm.getFile().get(0));
-            existingClinic.setImages(upLoadImageUrl);
+        Clinic existingClinic =clinicRepository.findById(clinicId)
+                .orElseThrow(()-> new RuntimeException("Clinic not found"));
+
+        if(clinicForm.getFile() != null && !clinicForm.getFile().isEmpty()) {
+            List<String> upLoadImageUrls = cloudinaryService.uploadClinicRoomImage(clinicForm.getFile());
+            existingClinic.setImages(upLoadImageUrls);
         }
         ClinicMapper.updateClinicForm(existingClinic,clinicForm);
         Clinic updatedClinic = clinicRepository.save(existingClinic);
@@ -131,6 +139,16 @@ public class ClinicImpl implements IClinicService {
     @Override
     public ResponseData<List<ClinicDTO>> getAllClinics() {
         List<ClinicDTO> listClinic = clinicRepository.findAll().stream()
+                .map(ClinicMapper::toDto)
+                .collect(Collectors.toList());
+        return new ResponseData<>(200, "clinic get successfully", listClinic);
+    }
+
+    @Override
+    public ResponseData<List<ClinicDTO>> getClinicsByOwnerId() {
+        ResponseEntity<UserDTO> currentUser = authClient.getCurrentUser();
+        ClinicOwner clinicOwner = clinicOwnerRepository.findByUserId(currentUser.getBody().getUserId());
+        List<ClinicDTO> listClinic = clinicRepository.findByOwner_OwnerId(clinicOwner.getOwnerId()).stream()
                 .map(ClinicMapper::toDto)
                 .collect(Collectors.toList());
         return new ResponseData<>(200, "clinic get successfully", listClinic);
