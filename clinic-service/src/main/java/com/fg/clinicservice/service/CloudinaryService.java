@@ -31,12 +31,12 @@ public class CloudinaryService {
     /**
      * Uploads an icon for a department/specialty to Cloudinary.
      *
-     * @param file The multipart file to upload
+     * @param files The multipart file to upload
      * @return The secure URL of the uploaded image
      * @throws RuntimeException if the upload fails
      */
-    public String uploadDepartmentIcon(MultipartFile file) {
-        return uploadImage(file, "departments");
+    public List<String> uploadDepartmentIcon(List<MultipartFile> files) {
+        return uploadMuitipleImages(files, "departments");
     }
 
     /**
@@ -68,7 +68,7 @@ public class CloudinaryService {
     /**
      * Uploads an image to a specific folder in Cloudinary.
      *
-     * @param file The multipart file to upload
+     * @param file       The multipart file to upload
      * @param folderName The subfolder name within the BASE_FOLDER
      * @return The secure URL of the uploaded image
      * @throws RuntimeException if the upload fails
@@ -83,6 +83,26 @@ public class CloudinaryService {
         } catch (Exception e) {
             throw new RuntimeException("Image upload failed to folder: " + folderName, e);
         }
+    }
+
+    /**
+     * Uploads multiple images to a specified subfolder within the Cloudinary base folder.
+     *
+     * @param files       The list of multipart file to upload
+     * @param folderName The subfolder name within the BASE_FOLDER
+     * @return a list of secure URLs pointing to the uploaded images
+     * @throws RuntimeException if any file upload fails
+     */
+
+    private List<String> uploadMuitipleImages(List<MultipartFile> files, String folderName) {
+        List<String> urls = new ArrayList<>();
+        for (MultipartFile file : files) {
+            if (file != null && !file.isEmpty()) {
+                String url = uploadImage(file, folderName);
+                urls.add(url);
+            }
+        }
+        return urls;
     }
 
     /**

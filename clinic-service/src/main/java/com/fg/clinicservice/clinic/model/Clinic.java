@@ -41,7 +41,8 @@ public class Clinic {
     private String description;
 
     @ElementCollection
-    @Column(name = "image", nullable = true)
+    @CollectionTable(name = "clinic_images", joinColumns = @JoinColumn(name = "clinic_id"))
+    @Column(name = "image_url")
     private List<String> images = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
