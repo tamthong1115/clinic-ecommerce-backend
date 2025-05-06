@@ -13,6 +13,7 @@ import java.util.UUID;
 public interface ClinicRepository extends JpaRepository<Clinic, UUID> {
     List<Clinic> findAll();
     Optional<Clinic> findById(UUID uuid);
+    List<Clinic> findByOwner_OwnerId(UUID ownerOwnerId);
 
     @Modifying
     @Query("UPDATE Clinic c SET c.status= :status WHERE c.clinicId= :clinicId")

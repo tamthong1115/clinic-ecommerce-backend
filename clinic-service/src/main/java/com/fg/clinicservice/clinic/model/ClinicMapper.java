@@ -17,7 +17,7 @@
                     .clinicPhone(clinic.getClinicPhone())
                     .clinicAddress(clinic.getClinicAddress())
                     .description(clinic.getDescription())
-                    .image(clinic.getImage())
+                    .images(clinic.getImages())
                     .status(clinic.getStatus())
                     .build();
         }

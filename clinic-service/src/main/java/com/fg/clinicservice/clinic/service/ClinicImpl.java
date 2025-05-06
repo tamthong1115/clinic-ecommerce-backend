@@ -9,17 +9,23 @@ import com.fg.clinicservice.clinic.dto.ClinicDTO;
 import com.fg.clinicservice.client.user.AuthClient;
 import com.fg.clinicservice.response.ResponseData;
 import com.fg.clinicservice.response.ResponseError;
+import com.fg.clinicservice.service.CloudinaryService;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class ClinicImpl implements IClinicService {
+    @Autowired
+    CloudinaryService cloudinaryService;
 
     private final  ClinicRepository clinicRepository;
     private final ClinicOwnerRepository clinicOwnerRepository;
@@ -77,6 +83,12 @@ public class ClinicImpl implements IClinicService {
         Clinic createClinic = ClinicMapper.fromForm(clinicForm);
         createClinic.setEmail(user.getEmail());
 
+        //Upload anh
+        if(clinicForm.getFile() != null && !clinicForm.getFile().isEmpty()) {
+            List<String> upLoadImageurls = cloudinaryService.uploadClinicRoomImage(clinicForm.getFile());
+            createClinic.setImages(upLoadImageurls);
+        }
+
         //luu va tra kq
         Clinic savedClinic = clinicRepository.save(createClinic);
         ClinicDTO clinicDto = ClinicMapper.toDto(savedClinic);
@@ -86,7 +98,24 @@ public class ClinicImpl implements IClinicService {
 
     @Override
     public ResponseData<ClinicDTO> updateClinic(UUID clinicId, ClinicForm clinicForm) {
-        Clinic existingClinic =clinicRepository.findById(clinicId).orElseThrow(()-> new RuntimeException("Clinic not found"));
+        Clinic existingClinic =clinicRepository.findById(clinicId)
+                .orElseThrow(()-> new RuntimeException("Clinic not found"));
+
+        List<String> oldImages = existingClinic.getImages();
+        List<String> keptImages = clinicForm.getImage();
+
+        List<String> deletedImages = oldImages.stream()
+                .filter(img -> !keptImages.contains(img))
+                .toList();
+
+        deletedImages.forEach(cloudinaryService::deleteImage);
+        List<String> newImageUrls = new ArrayList<>(keptImages);
+        if(clinicForm.getFile() != null && !clinicForm.getFile().isEmpty()) {
+            List<String> upLoadImageUrls = cloudinaryService.uploadClinicRoomImage(clinicForm.getFile());
+            newImageUrls.addAll(upLoadImageUrls);
+        }
+
+        existingClinic.setImages(newImageUrls);
         ClinicMapper.updateClinicForm(existingClinic,clinicForm);
         Clinic updatedClinic = clinicRepository.save(existingClinic);
         ClinicDTO clinicDto = ClinicMapper.toDto(updatedClinic);
@@ -122,6 +151,16 @@ public class ClinicImpl implements IClinicService {
     @Override
     public ResponseData<List<ClinicDTO>> getAllClinics() {
         List<ClinicDTO> listClinic = clinicRepository.findAll().stream()
+                .map(ClinicMapper::toDto)
+                .collect(Collectors.toList());
+        return new ResponseData<>(200, "clinic get successfully", listClinic);
+    }
+
+    @Override
+    public ResponseData<List<ClinicDTO>> getClinicsByOwnerId() {
+        ResponseEntity<UserDTO> currentUser = authClient.getCurrentUser();
+        ClinicOwner clinicOwner = clinicOwnerRepository.findByUserId(currentUser.getBody().getUserId());
+        List<ClinicDTO> listClinic = clinicRepository.findByOwner_OwnerId(clinicOwner.getOwnerId()).stream()
                 .map(ClinicMapper::toDto)
                 .collect(Collectors.toList());
         return new ResponseData<>(200, "clinic get successfully", listClinic);

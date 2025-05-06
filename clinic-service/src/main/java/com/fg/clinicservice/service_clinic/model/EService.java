@@ -20,7 +20,7 @@ import java.util.*;
 public class EService {
     @Id
     @UuidGenerator
-    @Column(name = "id",nullable = false,unique = true)
+    @Column(name = "service_id",nullable = false,unique = true)
     private UUID serviceId;
 
     @NotNull

@@ -6,6 +6,8 @@ import com.fg.clinicservice.speciality.model.SpecialityDto;
 import com.fg.clinicservice.speciality.model.SpecialityForm;
 import com.fg.clinicservice.speciality.model.SpecialityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,13 +64,11 @@ public class SpecialityServiceImpl implements ISpecialityService {
     }
 
     @Override
-    public ResponseData<List<SpecialityDto>> getAllSpeciality() {
+    public Page<SpecialityDto> getAllSpeciality(Pageable pageable) {
         // Lấy danh sách chuyên khoa
-        List<SpecialityDto> listSpeciality = specialityRepository.findAll().stream()
-                .map(SpecialityMapper::toDto)
-                .collect(Collectors.toList());
+        Page<Speciality> listSpeciality = specialityRepository.findAll(pageable);
 
         // Trả về
-        return new ResponseData<>(200, "Speciality found", listSpeciality);
+        return listSpeciality.map(SpecialityMapper::toDto);
     }
 }

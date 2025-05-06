@@ -10,11 +10,10 @@ import com.fg.clinicservice.special_requirement.service.SpecialRequirementServic
 import com.fg.clinicservice.speciality.model.SpecialityDto;
 import com.fg.clinicservice.speciality.service.ISpecialityService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,9 +40,12 @@ public class PublicController {
 
     @Operation(summary = "Get all service")
     @GetMapping("/get-all-service")
-    ResponseEntity<ResponseData<List<ServiceDto>>> getAllServices() {
-        ResponseData<List<ServiceDto>> listService = iService.getAllService();
-        return ResponseEntity.ok(listService);
+    public ResponseEntity<ResponseData<Page<ServiceDto>>> getAllServices(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size
+    ) {
+        Page<ServiceDto> servicePage = iService.getAllServices(PageRequest.of(page, size));
+        return ResponseEntity.ok(new ResponseData<>(200, "Lấy danh sách dịch vụ thành công", servicePage));
     }
 
     @Operation(summary = "Get service by ID")
@@ -77,9 +79,12 @@ public class PublicController {
 
     @Operation(summary = "Get all speciality")
     @GetMapping("/speciality/get-all")
-    public ResponseEntity<ResponseData<List<SpecialityDto>>> getAllSpeciality() {
-        ResponseData<List<SpecialityDto>> responseData = iSpecialityService.getAllSpeciality();
-        return ResponseEntity.ok(responseData);
+    public ResponseEntity<ResponseData<Page<SpecialityDto>>> getAllSpeciality(
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "12") int size
+    ) {
+        Page<SpecialityDto> responseData = iSpecialityService.getAllSpeciality(PageRequest.of(page, size));
+        return ResponseEntity.ok(new ResponseData<>(200, "Lấy danh sách chuyên khoa thành công"     , responseData));
     }
 
     @Operation(summary = "Get speciality by id")
@@ -91,8 +96,12 @@ public class PublicController {
 
     @Operation(summary = "Get service by specialityId")
     @GetMapping("/service-by-specid/{id}")
-    public ResponseEntity<ResponseData<List<ServiceDto>>> getServiceBySpecialityId(@PathVariable UUID id) {
-        ResponseData<List<ServiceDto>> responseData = iService.getAllServiceBySpeciality(id);
-        return ResponseEntity.ok(responseData);
+    public ResponseEntity<ResponseData<Page<ServiceDto>>> getServiceBySpecialityId(
+            @PathVariable UUID id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size
+    ) {
+        Page<ServiceDto> responseData = iService.getAllServiceBySpeciality(id, PageRequest.of(page, size));
+        return ResponseEntity.ok(new ResponseData<>(200, "Lấy danh sách dịch vụ thành công", responseData));
     }
 }

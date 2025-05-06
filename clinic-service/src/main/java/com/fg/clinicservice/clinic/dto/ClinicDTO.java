@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -21,6 +22,6 @@ public class ClinicDTO {
     private String clinicPhone;
     private String clinicAddress;
     private String description;
-    private String image;
+    private List<String> images;
     private Clinic.Status status;
 }
