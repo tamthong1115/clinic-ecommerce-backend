@@ -1,4 +1,4 @@
-package com.fg.doctorservice.client.user;
+package com.fg.appointment_service.client.user;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

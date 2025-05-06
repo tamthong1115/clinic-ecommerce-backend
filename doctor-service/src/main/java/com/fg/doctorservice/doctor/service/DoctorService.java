@@ -1,9 +1,9 @@
-package com.fg.doctorservice.doctor.service;
+package com.fg.appointment_service.doctor.service;
 
-import com.fg.doctorservice.client.user.UserDTO;
-import com.fg.doctorservice.doctor.dto.DoctorRequest;
-import com.fg.doctorservice.doctor.dto.DoctorBasicResponse;
-import com.fg.doctorservice.doctor.dto.DoctorDetailResponse;
+import com.fg.appointment_service.client.user.UserDTO;
+import com.fg.appointment_service.doctor.dto.DoctorRequest;
+import com.fg.appointment_service.doctor.dto.DoctorBasicResponse;
+import com.fg.appointment_service.doctor.dto.DoctorDetailResponse;
 import java.util.List;
 import java.util.UUID;
 

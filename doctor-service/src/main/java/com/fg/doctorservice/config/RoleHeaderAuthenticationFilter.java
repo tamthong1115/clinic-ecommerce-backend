@@ -1,4 +1,4 @@
-package com.fg.doctorservice.config;
+package com.fg.appointment_service.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

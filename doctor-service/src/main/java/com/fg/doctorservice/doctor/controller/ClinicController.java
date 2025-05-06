@@ -1,8 +1,8 @@
-package com.fg.doctorservice.doctor.controller;
+package com.fg.appointment_service.doctor.controller;
 
-import com.fg.doctorservice.doctor.service.DoctorService;
-import com.fg.doctorservice.doctor.dto.DoctorDetailResponse;
-import com.fg.doctorservice.doctor.dto.DoctorRequest;
+import com.fg.appointment_service.doctor.service.DoctorService;
+import com.fg.appointment_service.doctor.dto.DoctorDetailResponse;
+import com.fg.appointment_service.doctor.dto.DoctorRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

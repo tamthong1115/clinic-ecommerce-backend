@@ -1,4 +1,4 @@
-package com.fg.doctorservice.config;
+package com.fg.appointment_service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.fg.doctorservice.doctor.dto;
+package com.fg.appointment_service.doctor.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 public class DoctorRequest {

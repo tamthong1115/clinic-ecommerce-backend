@@ -5,16 +5,17 @@ set -e
 SCHEMAS_DIR="/schemas"
 
 # Ordered list of databases
-ordered_databases=("user" "doctor" "clinic")
+ordered_databases=("user" "doctor" "clinic" "appointment")
 
 # Mapping database names to their schema files
 declare -A schemas=(
   ["user"]="user_schema.sql"
   ["doctor"]="doctor_schema.sql"
   ["clinic"]="clinic_schema.sql"
+  ["appointment"]="appointment_schema.sql"
 )
 
-# Function to create a database if it doesn't exist
+# Create a database if it doesn't exist
 create_db() {
   local db_name=$1
   if psql -U "$POSTGRES_USER" -lqt | cut -d \| -f 1 | grep -qw "$db_name"; then

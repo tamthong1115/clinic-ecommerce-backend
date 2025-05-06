@@ -1,13 +1,13 @@
-package com.fg.doctorservice.doctor;
+package com.fg.appointment_service.doctor;
 
-import com.fg.doctorservice.doctor.dto.DoctorBasicResponse;
-import com.fg.doctorservice.doctor.dto.DoctorDetailResponse;
-import com.fg.doctorservice.doctor.dto.DoctorRequest;
-import com.fg.doctorservice.doctor.dto.DoctorCertificationDTO;
-import com.fg.doctorservice.schedule.DoctorScheduleDTO;
-import com.fg.doctorservice.doctor.model.Doctor;
-import com.fg.doctorservice.doctor.model.DoctorCertification;
-import com.fg.doctorservice.schedule.DoctorSchedule;
+import com.fg.appointment_service.doctor.dto.DoctorBasicResponse;
+import com.fg.appointment_service.doctor.dto.DoctorDetailResponse;
+import com.fg.appointment_service.doctor.dto.DoctorRequest;
+import com.fg.appointment_service.doctor.dto.DoctorCertificationDTO;
+import com.fg.appointment_service.schedule.DoctorScheduleDTO;
+import com.fg.appointment_service.doctor.model.Doctor;
+import com.fg.appointment_service.doctor.model.DoctorCertification;
+import com.fg.appointment_service.schedule.DoctorSchedule;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;

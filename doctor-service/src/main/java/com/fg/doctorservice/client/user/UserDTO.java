@@ -1,4 +1,4 @@
-package com.fg.doctorservice.client.user;
+package com.fg.appointment_service.client.user;
 
 import lombok.Data;
 

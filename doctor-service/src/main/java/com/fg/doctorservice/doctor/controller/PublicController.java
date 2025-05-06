@@ -1,8 +1,8 @@
-package com.fg.doctorservice.doctor.controller;
+package com.fg.appointment_service.doctor.controller;
 
-import com.fg.doctorservice.doctor.service.DoctorService;
-import com.fg.doctorservice.doctor.dto.DoctorBasicResponse;
-import com.fg.doctorservice.doctor.dto.DoctorDetailResponse;
+import com.fg.appointment_service.doctor.service.DoctorService;
+import com.fg.appointment_service.doctor.dto.DoctorBasicResponse;
+import com.fg.appointment_service.doctor.dto.DoctorDetailResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

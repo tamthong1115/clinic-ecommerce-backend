@@ -1,5 +1,8 @@
-package com.fg.doctorservice.schedule;
+package com.fg.doctorservice.schedule.controller;
 
+import com.fg.doctorservice.schedule.dto.DoctorScheduleDTO;
+import com.fg.doctorservice.schedule.dto.DoctorScheduleRequest;
+import com.fg.doctorservice.schedule.service.DoctorScheduleService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +14,9 @@ import java.util.UUID;
 @RequestMapping("/api/v1/clinic/{clinicID}/doctors/{doctorId}/schedules")
 public class ScheduleController {
 
-    private final ScheduleService scheduleService;
+    private final DoctorScheduleService scheduleService;
 
-    public ScheduleController(ScheduleService scheduleService) {
+    public ScheduleController(DoctorScheduleService scheduleService) {
         this.scheduleService = scheduleService;
     }
 

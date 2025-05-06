@@ -1,6 +1,6 @@
-package com.fg.doctorservice.doctor.dto;
+package com.fg.appointment_service.doctor.dto;
 
-import com.fg.doctorservice.schedule.DoctorScheduleDTO;
+import com.fg.appointment_service.schedule.DoctorScheduleDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import java.util.List;

@@ -1,6 +1,6 @@
-package com.fg.doctorservice.doctor.repository;
+package com.fg.appointment_service.doctor.repository;
 
-import com.fg.doctorservice.doctor.model.Doctor;
+import com.fg.appointment_service.doctor.model.Doctor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

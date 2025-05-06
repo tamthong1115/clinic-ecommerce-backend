@@ -1,4 +1,4 @@
-package com.fg.doctorservice.doctor.model;
+package com.fg.appointment_service.doctor.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

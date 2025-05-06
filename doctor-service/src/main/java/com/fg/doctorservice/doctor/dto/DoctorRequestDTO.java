@@ -1,4 +1,4 @@
-package com.fg.doctorservice.doctor.dto;
+package com.fg.appointment_service.doctor.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
