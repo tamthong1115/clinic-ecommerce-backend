@@ -1,16 +1,14 @@
 package com.fg.clinicservice.service_clinic.service;
 
 import com.fg.clinicservice.response.ResponseData;
-import com.fg.clinicservice.service_clinic.model.EService;
-import com.fg.clinicservice.service_clinic.model.ServiceForm;
-import com.fg.clinicservice.service_clinic.model.ServiceDto;
-import com.fg.clinicservice.service_clinic.model.ServiceMapper;
+import com.fg.clinicservice.service_clinic.model.*;
 import com.fg.clinicservice.speciality.model.Speciality;
 import com.fg.clinicservice.speciality.service.SpecialityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
@@ -78,4 +76,20 @@ public class ServiceImpl implements IService {
         Page<EService> listServices = serviceRepository.findAllBySpecialityId(specialityId, pageable);
         return listServices.map(ServiceMapper::toDto);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<ServiceDto> searchServices(ServiceSearchCriteria criteria, Pageable pageable) {
+        return serviceRepository.findByFilters(
+                criteria.getSpecialty(),
+                criteria.getClinicId(),
+                criteria.getMinPrice(),
+                criteria.getMaxPrice(),
+                criteria.getIsActive(),
+                criteria.getSearchTerm(),
+                pageable
+        ).map(ServiceMapper::toDto);
+    }
+
+
 }

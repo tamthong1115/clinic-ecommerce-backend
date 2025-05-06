@@ -2,8 +2,12 @@ package com.fg.clinicservice.controller;
 
 import com.fg.clinicservice.clinic.dto.ClinicDTO;
 import com.fg.clinicservice.clinic.service.IClinicService;
+import com.fg.clinicservice.doctor.dto.DoctorBasicResponse;
+import com.fg.clinicservice.doctor.dto.DoctorDetailResponse;
+import com.fg.clinicservice.doctor.service.DoctorService;
 import com.fg.clinicservice.response.ResponseData;
 import com.fg.clinicservice.service_clinic.model.ServiceDto;
+import com.fg.clinicservice.service_clinic.model.ServiceSearchCriteria;
 import com.fg.clinicservice.service_clinic.service.IService;
 import com.fg.clinicservice.special_requirement.model.SpecialRequirementDto;
 import com.fg.clinicservice.special_requirement.service.SpecialRequirementService;
@@ -25,17 +29,31 @@ public class PublicController {
     private IClinicService iClinicService;
     private SpecialRequirementService specialRequirementService;
     private ISpecialityService iSpecialityService;
+    private final DoctorService doctorService;
 
 
     public PublicController(IService iService,
                             IClinicService iClinicService,
                             SpecialRequirementService specialRequirementService,
-                            ISpecialityService iSpecialityService
+                            ISpecialityService iSpecialityService, DoctorService doctorService
     ) {
         this.iService = iService;
         this.iClinicService = iClinicService;
         this.specialRequirementService = specialRequirementService;
         this.iSpecialityService = iSpecialityService;
+        this.doctorService = doctorService;
+    }
+
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DoctorDetailResponse> getDoctorById(@PathVariable UUID id) {
+        return ResponseEntity.ok(doctorService.getDoctorById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DoctorBasicResponse>> getAllDoctors() {
+        return ResponseEntity.ok(doctorService.getAllDoctors());
     }
 
     @Operation(summary = "Get all service")
@@ -103,5 +121,16 @@ public class PublicController {
     ) {
         Page<ServiceDto> responseData = iService.getAllServiceBySpeciality(id, PageRequest.of(page, size));
         return ResponseEntity.ok(new ResponseData<>(200, "Lấy danh sách dịch vụ thành công", responseData));
+    }
+
+    @Operation(summary = "Search service with filter")
+    @GetMapping("/search-service")
+    public ResponseEntity<ResponseData<Page<ServiceDto>>> searchService(
+            ServiceSearchCriteria criteria,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size
+    ) {
+        Page<ServiceDto> searchResults = iService.searchServices(criteria, PageRequest.of(page, size));
+        return ResponseEntity.ok(new ResponseData<>(200, "Lấy danh sách dịch vụ thành công", searchResults));
     }
 }

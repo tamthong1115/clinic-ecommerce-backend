@@ -126,10 +126,35 @@ services:
         condition: service_healthy
     environment:
       CONFIG_SERVER_URL: http://config-server:8888
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/patient_appointment
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/patient
       EUREKA_SERVER_URL: http://eureka-server:8761/eureka
       EUREKA_HOSTNAME: eureka-server
       ZIPKIN_HOSTNAME: http://zipkin:9411
+
+
+  appointment-service:
+    build:
+      context: ./appointment-service
+      dockerfile: Dockerfile
+    ports:
+      - "7000:7000"
+    networks:
+      - clinic-ecommerce-net
+    restart: unless-stopped
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      eureka-server:
+        condition: service_healthy
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/appointment
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      EUREKA_HOSTNAME: eureka-server
+      ZIPKIN_HOSTNAME: http://zipkin:9411
+
   auth-service:
     build:
       context: ./auth-service

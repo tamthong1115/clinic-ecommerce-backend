@@ -37,6 +37,13 @@ public class JwtValidationGatewayFilterFactory extends AbstractGatewayFilterFact
     @Override
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
+            String path = exchange.getRequest().getURI().getPath();
+
+            // Allow public and auth endpoints without validation
+            if (path.matches("/api/v\\d+/public.*")) {
+                return chain.filter(exchange);
+            };
+
             String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             log.debug("Incoming request: {}", exchange.getRequest().getURI());
             log.debug("Authorization header: {}", token);

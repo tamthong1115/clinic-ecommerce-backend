@@ -9,8 +9,7 @@ import com.fg.clinicservice.clinic.dto.ClinicDTO;
 import com.fg.clinicservice.client.user.AuthClient;
 import com.fg.clinicservice.response.ResponseData;
 import com.fg.clinicservice.response.ResponseError;
-import com.fg.clinicservice.service.CloudinaryService;
-import jakarta.annotation.Resource;
+import com.fg.clinicservice.util.CloudinaryService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -83,6 +82,13 @@ public class ClinicImpl implements IClinicService {
         Clinic createClinic = ClinicMapper.fromForm(clinicForm);
         createClinic.setEmail(user.getEmail());
 
+        // Set owner if ownerId is provided
+        if(clinicForm.getOwnerId() != null){
+            ClinicOwner clinicOwner = clinicOwnerRepository.findById(clinicForm.getOwnerId())
+                    .orElseThrow(() -> new RuntimeException("Clinic owner not found"));
+            createClinic.setOwner(clinicOwner);
+        }
+
         //Upload anh
         if(clinicForm.getFile() != null && !clinicForm.getFile().isEmpty()) {
             List<String> upLoadImageurls = cloudinaryService.uploadClinicRoomImage(clinicForm.getFile());
@@ -117,6 +123,14 @@ public class ClinicImpl implements IClinicService {
 
         existingClinic.setImages(newImageUrls);
         ClinicMapper.updateClinicForm(existingClinic,clinicForm);
+
+        // Update owner if ownerId is provided
+        if (clinicForm.getOwnerId() != null) {
+            ClinicOwner owner = clinicOwnerRepository.findById(clinicForm.getOwnerId())
+                    .orElseThrow(() -> new RuntimeException("Owner not found"));
+            existingClinic.setOwner(owner);
+        }
+
         Clinic updatedClinic = clinicRepository.save(existingClinic);
         ClinicDTO clinicDto = ClinicMapper.toDto(updatedClinic);
         return new ResponseData<>(200, "clinic updated successfully", clinicDto);

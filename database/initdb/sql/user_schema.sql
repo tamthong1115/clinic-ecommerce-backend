@@ -12,4 +12,6 @@ VALUES
     ('c9ab5852-50f6-4989-b71a-2b7986fc70fa', 'user@gmail.com',true, '$2a$10$jyLIBHNdBTMZ45R60Fo1v.su5kUP/T5hUCZDSbGMzt9oG2PlQge.q', 'USER'),
     ('eb7c3204-dfbe-4eba-a06c-5a8bade70671', 'doctor@gmail.com',true, '$2a$10$1oP8BRT0m/L4SavCXkVQKOKn..lWHhJ7.Wl.ZZNn.lexG7YQzNFMS', 'DOCTOR'),
     ('3f852db7-8d9c-4ba0-af91-b96bf9ddfcb7', 'clinic-owner@gmail.com',true,'$2a$10$W7fJGx5Ny9QGLpfNNuIjKuBd/7w15iZ4NoCwjFmGMr8KRNjqOmeTK', 'CLINIC_OWNER'),
+    ('12d9d732-f0a6-40fa-8b81-72c181e372c8', 'clinic-owner1@gmail.com',true,'$2a$10$W7fJGx5Ny9QGLpfNNuIjKuBd/7w15iZ4NoCwjFmGMr8KRNjqOmeTK', 'CLINIC_OWNER'),
+    ('f31cd6b3-ffa0-4a09-9a79-87147ca5d90d', 'clinic-owner2@gmail.com',true,'$2a$10$W7fJGx5Ny9QGLpfNNuIjKuBd/7w15iZ4NoCwjFmGMr8KRNjqOmeTK', 'CLINIC_OWNER'),
     ('be2aabf5-3f13-4b81-8ca0-396f83e3e15c', 'admin@gmail.com',true, '$2a$10$DYTm9YZ7HvknFxFtVf.cT.AGs7gLjqqeXJYl1XDF93w1Es/a4vvDO', 'ADMIN')

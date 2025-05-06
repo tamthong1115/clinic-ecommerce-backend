@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -116,5 +117,17 @@ public class AuthService {
     User savedUser = userService.save(newUser);
 
     return userMapper.toUserDTO(savedUser);
+  }
+
+  public void deleteUser(UUID userId) {
+    User user = userService.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException(
+                    String.format("User with ID %s not found", userId)
+            ));
+
+    // Delete the user
+    userService.delete(user);
+
+    logger.info("User with ID {} deleted successfully", userId);
   }
 }
