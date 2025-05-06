@@ -83,6 +83,13 @@ public class ClinicImpl implements IClinicService {
         Clinic createClinic = ClinicMapper.fromForm(clinicForm);
         createClinic.setEmail(user.getEmail());
 
+        // Set owner if ownerId is provided
+        if(clinicForm.getOwnerId() != null){
+            ClinicOwner clinicOwner = clinicOwnerRepository.findById(clinicForm.getOwnerId())
+                    .orElseThrow(() -> new RuntimeException("Clinic owner not found"));
+            createClinic.setOwner(clinicOwner);
+        }
+
         //Upload anh
         if(clinicForm.getFile() != null && !clinicForm.getFile().isEmpty()) {
             List<String> upLoadImageurls = cloudinaryService.uploadClinicRoomImage(clinicForm.getFile());
@@ -117,6 +124,14 @@ public class ClinicImpl implements IClinicService {
 
         existingClinic.setImages(newImageUrls);
         ClinicMapper.updateClinicForm(existingClinic,clinicForm);
+
+        // Update owner if ownerId is provided
+        if (clinicForm.getOwnerId() != null) {
+            ClinicOwner owner = clinicOwnerRepository.findById(clinicForm.getOwnerId())
+                    .orElseThrow(() -> new RuntimeException("Owner not found"));
+            existingClinic.setOwner(owner);
+        }
+
         Clinic updatedClinic = clinicRepository.save(existingClinic);
         ClinicDTO clinicDto = ClinicMapper.toDto(updatedClinic);
         return new ResponseData<>(200, "clinic updated successfully", clinicDto);

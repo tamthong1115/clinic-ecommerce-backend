@@ -68,6 +68,31 @@ CREATE TABLE IF NOT EXISTS special_requirement (
     CONSTRAINT fk_service FOREIGN KEY (service_id) REFERENCES service(service_id) ON DELETE CASCADE
 );
 
+-- Then create the doctor table that references specialty
+CREATE TABLE IF NOT EXISTS "doctor" (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    email VARCHAR(255),
+    phone VARCHAR(50),
+    gender VARCHAR(20),
+    profile_picture VARCHAR(255),
+    experience_years INT,
+    license_number VARCHAR(100),
+    education TEXT,
+    clinic_id UUID,
+    CONSTRAINT fk_clinic FOREIGN KEY (clinic_id) REFERENCES clinic(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS doctor_speciality (
+    doctor_id UUID NOT NULL,
+    speciality_id UUID NOT NULL,
+    PRIMARY KEY (doctor_id, speciality_id),
+    CONSTRAINT fk_doctor FOREIGN KEY (doctor_id) REFERENCES "doctor"(id) ON DELETE CASCADE,
+    CONSTRAINT fk_speciality FOREIGN KEY (speciality_id) REFERENCES "speciality"(id) ON DELETE CASCADE
+);
 
 INSERT INTO clinic_owner (id,
                           address,
@@ -354,3 +379,53 @@ VALUES ('1c34e8ee-8387-40b7-8f8e-1e3c4c2a0a55', 'Nhịn ăn 6 tiếng trước k
     ON CONFLICT (id) DO NOTHING;
 
 
+
+
+-- Sample doctors with clinic assignments
+INSERT INTO "doctor" (
+    id,
+    user_id,
+    first_name,
+    last_name,
+    email,
+    phone,
+    gender,
+    profile_picture,
+    experience_years,
+    license_number,
+    education,
+    clinic_id
+) VALUES
+      ('a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+       'eb7c3204-dfbe-4eba-a06c-5a8bade70671',
+       'John',
+       'Doe',
+       'doctor@gmail.com',
+       '+1234567890',
+       'Male',
+       'https://example.com/profile1.jpg',
+       10,
+       'LIC123456',
+       'MD, Cardiology, Harvard Medical School',
+       'a774500c-6dd1-4378-a5f9-ac91458a9b6f'),
+
+      ('b2c3d4e5-f678-90ab-cdef-234567890abc',
+       'c9ab5852-50f6-4989-b71a-2b7986fc70fa',
+       'Jane',
+       'Smith',
+       'user@gmail.com',
+       '+1987654321',
+       'Female',
+       'https://example.com/profile2.jpg',
+       7,
+       'LIC654321',
+       'MD, Dermatology, Stanford University',
+       'c51b8083-58a3-4db1-98b7-326c9e3e7571')
+ON CONFLICT (id) DO NOTHING;
+
+-- Doctor-Specialty many-to-many relationship
+INSERT INTO doctor_speciality (doctor_id, speciality_id) VALUES
+                                                             ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'f5c101d2-9f2a-46c0-b541-b1c09c1a1b07'), -- Cardiology
+                                                             ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'f5c101d2-9f2a-46c0-b541-b1c09c1a1b01'), -- General medicine
+                                                             ('b2c3d4e5-f678-90ab-cdef-234567890abc', 'f5c101d2-9f2a-46c0-b541-b1c09c1a1b06')  -- Dermatology
+ON CONFLICT (doctor_id, speciality_id) DO NOTHING;

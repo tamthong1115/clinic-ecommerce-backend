@@ -1,6 +1,7 @@
 package com.fg.clinicservice.clinic.model;
 
 import com.fg.clinicservice.clinic_service.model.ClinicService;
+import com.fg.clinicservice.doctor.model.Doctor;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -51,6 +52,9 @@ public class Clinic {
 
     @OneToMany(mappedBy = "clinic", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ClinicService> clinicServices = new HashSet<>();
+
+    @OneToMany(mappedBy = "clinic")
+    private Set<Doctor> doctors = new HashSet<>();
 
     public enum Status {
         CLOSED,

@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.fg</groupId>
-	<artifactId>doctor-service</artifactId>
+	<artifactId>appointment-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>doctor-service</name>
-	<description>doctor-service</description>
+	<name>appointment-service</name>
+	<description>appointment-service</description>
 	<url/>
 	<licenses>
 		<license/>
