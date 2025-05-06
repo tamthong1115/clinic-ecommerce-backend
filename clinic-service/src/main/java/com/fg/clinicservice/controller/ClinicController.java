@@ -7,9 +7,14 @@ import com.fg.clinicservice.clinic.model.ClinicForm;
 import com.fg.clinicservice.clinic.model.ClinicRequest;
 import com.fg.clinicservice.clinic_service.model.ClinicServiceDto;
 import com.fg.clinicservice.clinic_service.model.ClinicServiceForm;
+import com.fg.clinicservice.doctor.dto.DoctorDetailResponse;
+import com.fg.clinicservice.doctor.dto.DoctorRequest;
+import com.fg.clinicservice.doctor.service.DoctorService;
 import com.fg.clinicservice.clinic_service.model.ServiceDTO_Clinic;
 import com.fg.clinicservice.response.ResponseData;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,13 +27,35 @@ public class ClinicController {
 
     private com.fg.clinicservice.clinic.service.IClinicService iClinicService1;
     private com.fg.clinicservice.clinic_service.service.IClinicService iClinicService2;
+    private final DoctorService doctorService;
 
     public ClinicController(
             com.fg.clinicservice.clinic.service.IClinicService iClinicService1,
-            com.fg.clinicservice.clinic_service.service.IClinicService iClinicService2
+            com.fg.clinicservice.clinic_service.service.IClinicService iClinicService2, DoctorService doctorService
     ) {
         this.iClinicService1 = iClinicService1;
         this.iClinicService2 = iClinicService2;
+        this.doctorService = doctorService;
+    }
+
+
+    @PostMapping("/{clinic_id}")
+    public ResponseEntity<DoctorDetailResponse> createDoctorWithClinicId(
+            @PathVariable UUID clinic_id,
+            @Valid @RequestBody DoctorRequest doctorRequest) {
+        return new ResponseEntity<>(doctorService.createDoctor(clinic_id, doctorRequest), HttpStatus.CREATED);
+    }
+
+    @PostMapping
+    public ResponseEntity<DoctorDetailResponse> createDoctorWithoutClinicId(
+            @Valid @RequestBody DoctorRequest doctorRequest) {
+        return new ResponseEntity<>(doctorService.createDoctor(null, doctorRequest), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDoctor(@PathVariable UUID id) {
+        doctorService.deleteDoctor(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Get clinic by owner Id")

@@ -68,6 +68,31 @@ CREATE TABLE IF NOT EXISTS special_requirement (
     CONSTRAINT fk_service FOREIGN KEY (service_id) REFERENCES service(service_id) ON DELETE CASCADE
 );
 
+-- Then create the doctor table that references specialty
+CREATE TABLE IF NOT EXISTS "doctor" (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    email VARCHAR(255),
+    phone VARCHAR(50),
+    gender VARCHAR(20),
+    profile_picture VARCHAR(255),
+    experience_years INT,
+    license_number VARCHAR(100),
+    education TEXT,
+    clinic_id UUID,
+    CONSTRAINT fk_clinic FOREIGN KEY (clinic_id) REFERENCES clinic(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS doctor_speciality (
+    doctor_id UUID NOT NULL,
+    speciality_id UUID NOT NULL,
+    PRIMARY KEY (doctor_id, speciality_id),
+    CONSTRAINT fk_doctor FOREIGN KEY (doctor_id) REFERENCES "doctor"(id) ON DELETE CASCADE,
+    CONSTRAINT fk_speciality FOREIGN KEY (speciality_id) REFERENCES "speciality"(id) ON DELETE CASCADE
+);
 
 INSERT INTO clinic_owner (id,
                           address,
@@ -94,7 +119,35 @@ VALUES ('affd0938-a77d-4404-8461-788e64ad1dab',
         NULL,
         NULL,
         NULL,
-        '3f852db7-8d9c-4ba0-af91-b96bf9ddfcb7') ON CONFLICT (id) DO NOTHING;
+        '3f852db7-8d9c-4ba0-af91-b96bf9ddfcb7'),
+       ('b7893c41-c5e2-48f1-9454-46235b19d48c',
+        '456 Đường Lê Lợi, Quận 3, TP.HCM',
+        'Hồ Chí Minh',
+        '1985-07-22',
+        'nguyenthi@mail.com',
+        'Thi',
+        'Nguyễn',
+        'CLO-001234',
+        '0912345678',
+        '70000',
+        'https://example.com/profiles/nguyenthi.jpg',
+        'Hồ Chí Minh',
+        '12d9d732-f0a6-40fa-8b81-72c181e372c8'),
+
+       ('4d8c03d1-8735-46b1-a88f-4a7ac1c0a238',
+        '789 Đường Trần Hưng Đạo, Quận 5, TP.HCM',
+        'Hồ Chí Minh',
+        '1990-03-15',
+        'tranvan@mail.com',
+        'Văn',
+        'Trần',
+        'CLO-005678',
+        '0909876543',
+        '70000',
+        'https://example.com/profiles/tranvan.jpg',
+        'Hồ Chí Minh',
+        'f31cd6b3-ffa0-4a09-9a79-87147ca5d90d')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO clinic (id,
                            address,
@@ -113,7 +166,27 @@ VALUES ('a774500c-6dd1-4378-a5f9-ac91458a9b6f',
         '2251120349@ut.edu.vn',
         'https://example.com/images/clinic.png',
         'CLOSED',
-        'affd0938-a77d-4404-8461-788e64ad1dab') ON CONFLICT (id) DO NOTHING;
+        'affd0938-a77d-4404-8461-788e64ad1dab'),
+       ('c51b8083-58a3-4db1-98b7-326c9e3e7571',
+        '456 Đường Lê Lợi, Quận 3, TP.HCM',
+        'Phòng Khám Đa Khoa Nguyễn Thi',
+        '0912345678',
+        'Phòng khám chuyên khoa tai mũi họng với trang thiết bị hiện đại và đội ngũ y bác sĩ giàu kinh nghiệm.',
+        'nguyenthi@mail.com',
+        'https://example.com/images/clinic_nguyen_thi.png',
+        'OPEN',
+        'b7893c41-c5e2-48f1-9454-46235b19d48c'),
+
+       ('7eb0a7de-9658-4dbf-a42f-1804f2b5d734',
+        '789 Đường Trần Hưng Đạo, Quận 5, TP.HCM',
+        'Phòng Khám Nhi Khoa Trần Văn',
+        '0909876543',
+        'Phòng khám chuyên khoa nhi cung cấp dịch vụ chăm sóc sức khỏe tổng thể cho trẻ em từ sơ sinh đến 15 tuổi.',
+        'tranvan@mail.com',
+        'https://example.com/images/clinic_tran_van.png',
+        'OPEN',
+        '4d8c03d1-8735-46b1-a88f-4a7ac1c0a238')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO speciality (id,
                                name,
@@ -306,3 +379,53 @@ VALUES ('1c34e8ee-8387-40b7-8f8e-1e3c4c2a0a55', 'Nhịn ăn 6 tiếng trước k
     ON CONFLICT (id) DO NOTHING;
 
 
+
+
+-- Sample doctors with clinic assignments
+INSERT INTO "doctor" (
+    id,
+    user_id,
+    first_name,
+    last_name,
+    email,
+    phone,
+    gender,
+    profile_picture,
+    experience_years,
+    license_number,
+    education,
+    clinic_id
+) VALUES
+      ('a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+       'eb7c3204-dfbe-4eba-a06c-5a8bade70671',
+       'John',
+       'Doe',
+       'doctor@gmail.com',
+       '+1234567890',
+       'Male',
+       'https://example.com/profile1.jpg',
+       10,
+       'LIC123456',
+       'MD, Cardiology, Harvard Medical School',
+       'a774500c-6dd1-4378-a5f9-ac91458a9b6f'),
+
+      ('b2c3d4e5-f678-90ab-cdef-234567890abc',
+       'c9ab5852-50f6-4989-b71a-2b7986fc70fa',
+       'Jane',
+       'Smith',
+       'user@gmail.com',
+       '+1987654321',
+       'Female',
+       'https://example.com/profile2.jpg',
+       7,
+       'LIC654321',
+       'MD, Dermatology, Stanford University',
+       'c51b8083-58a3-4db1-98b7-326c9e3e7571')
+ON CONFLICT (id) DO NOTHING;
+
+-- Doctor-Specialty many-to-many relationship
+INSERT INTO doctor_speciality (doctor_id, speciality_id) VALUES
+                                                             ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'f5c101d2-9f2a-46c0-b541-b1c09c1a1b07'), -- Cardiology
+                                                             ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'f5c101d2-9f2a-46c0-b541-b1c09c1a1b01'), -- General medicine
+                                                             ('b2c3d4e5-f678-90ab-cdef-234567890abc', 'f5c101d2-9f2a-46c0-b541-b1c09c1a1b06')  -- Dermatology
+ON CONFLICT (doctor_id, speciality_id) DO NOTHING;

@@ -2,6 +2,9 @@ package com.fg.clinicservice.controller;
 
 import com.fg.clinicservice.clinic.dto.ClinicDTO;
 import com.fg.clinicservice.clinic.service.IClinicService;
+import com.fg.clinicservice.doctor.dto.DoctorBasicResponse;
+import com.fg.clinicservice.doctor.dto.DoctorDetailResponse;
+import com.fg.clinicservice.doctor.service.DoctorService;
 import com.fg.clinicservice.response.ResponseData;
 import com.fg.clinicservice.service_clinic.model.ServiceDto;
 import com.fg.clinicservice.service_clinic.service.IService;
@@ -25,17 +28,31 @@ public class PublicController {
     private IClinicService iClinicService;
     private SpecialRequirementService specialRequirementService;
     private ISpecialityService iSpecialityService;
+    private final DoctorService doctorService;
 
 
     public PublicController(IService iService,
                             IClinicService iClinicService,
                             SpecialRequirementService specialRequirementService,
-                            ISpecialityService iSpecialityService
+                            ISpecialityService iSpecialityService, DoctorService doctorService
     ) {
         this.iService = iService;
         this.iClinicService = iClinicService;
         this.specialRequirementService = specialRequirementService;
         this.iSpecialityService = iSpecialityService;
+        this.doctorService = doctorService;
+    }
+
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DoctorDetailResponse> getDoctorById(@PathVariable UUID id) {
+        return ResponseEntity.ok(doctorService.getDoctorById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DoctorBasicResponse>> getAllDoctors() {
+        return ResponseEntity.ok(doctorService.getAllDoctors());
     }
 
     @Operation(summary = "Get all service")
