@@ -5,6 +5,7 @@ import com.fg.clinicservice.clinic.service.ClinicRepository;
 import com.fg.clinicservice.clinic_service.model.*;
 import com.fg.clinicservice.response.ResponseData;
 import com.fg.clinicservice.service_clinic.model.EService;
+import com.fg.clinicservice.service_clinic.model.ServiceDto;
 import com.fg.clinicservice.service_clinic.service.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,10 +74,15 @@ public class ClinicServiceImpl implements IClinicService {
     }
 
     @Override
-    public ResponseData<List<ClinicServiceDto>> getByClinic(UUID clinicId) {
-        List<ClinicServiceDto> list = clinicServiceRepository.findByClinic_ClinicId(clinicId).stream()
-                .map(ClinicServiceMapper::toDto)
+    public ResponseData<List<ServiceDTO_Clinic>> getByClinic(UUID clinicId) {
+        List<ClinicService> list = clinicServiceRepository.findByClinic_ClinicId(clinicId);
+        List<ServiceDTO_Clinic> listService = list.stream()
+                .map(item -> {
+                    EService service = item.getService();
+                    return ClinicServiceMapper.toCLinicDto(service, item);
+                })
                 .collect(Collectors.toList());
-        return  new ResponseData<>(200,"Clinic service get successfully", list);
+
+        return  new ResponseData<>(200,"Clinic service get successfully", listService);
     }
 }

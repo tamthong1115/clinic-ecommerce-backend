@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -100,10 +101,21 @@ public class ClinicImpl implements IClinicService {
         Clinic existingClinic =clinicRepository.findById(clinicId)
                 .orElseThrow(()-> new RuntimeException("Clinic not found"));
 
+        List<String> oldImages = existingClinic.getImages();
+        List<String> keptImages = clinicForm.getImage();
+
+        List<String> deletedImages = oldImages.stream()
+                .filter(img -> !keptImages.contains(img))
+                .toList();
+
+        deletedImages.forEach(cloudinaryService::deleteImage);
+        List<String> newImageUrls = new ArrayList<>(keptImages);
         if(clinicForm.getFile() != null && !clinicForm.getFile().isEmpty()) {
             List<String> upLoadImageUrls = cloudinaryService.uploadClinicRoomImage(clinicForm.getFile());
-            existingClinic.setImages(upLoadImageUrls);
+            newImageUrls.addAll(upLoadImageUrls);
         }
+
+        existingClinic.setImages(newImageUrls);
         ClinicMapper.updateClinicForm(existingClinic,clinicForm);
         Clinic updatedClinic = clinicRepository.save(existingClinic);
         ClinicDTO clinicDto = ClinicMapper.toDto(updatedClinic);

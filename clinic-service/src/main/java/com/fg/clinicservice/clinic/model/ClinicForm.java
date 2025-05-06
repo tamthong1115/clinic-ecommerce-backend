@@ -11,7 +11,8 @@ public class ClinicForm {
     private String clinicAddress;
     private String clinicPhone;
     private String description;
-    private String image;
     private Clinic.Status status;
+    private List<String> image;
     private List<MultipartFile> file;
+
 }

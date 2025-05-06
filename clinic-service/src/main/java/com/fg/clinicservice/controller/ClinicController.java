@@ -7,6 +7,7 @@ import com.fg.clinicservice.clinic.model.ClinicForm;
 import com.fg.clinicservice.clinic.model.ClinicRequest;
 import com.fg.clinicservice.clinic_service.model.ClinicServiceDto;
 import com.fg.clinicservice.clinic_service.model.ClinicServiceForm;
+import com.fg.clinicservice.clinic_service.model.ServiceDTO_Clinic;
 import com.fg.clinicservice.response.ResponseData;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
@@ -66,5 +67,12 @@ public class ClinicController {
     public ResponseEntity<ResponseData<String>> updateServiceStatus(@RequestBody ClinicServiceForm clinicServiceForm) {
         ResponseData<String> responseData = iClinicService2.update(clinicServiceForm);
         return ResponseEntity.ok(responseData);
+    }
+
+    @Operation(summary = "get all service in clinic")
+    @GetMapping("/get-service/{id}")
+    public ResponseEntity<ResponseData<List<ServiceDTO_Clinic>>> getServiceById(@PathVariable UUID id) {
+        ResponseData<List<ServiceDTO_Clinic>> response = iClinicService2.getByClinic(id);
+        return  ResponseEntity.ok(response);
     }
 }
