@@ -39,7 +39,7 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
         schedule.setDayOfWeek(request.getDayOfWeek());
         schedule.setStartTime(request.getStartTime());
         schedule.setEndTime(request.getEndTime());
-
+        schedule.setClinicId(doctor.getClinic().getClinicId());
 
 
         DoctorSchedule savedSchedule = doctorScheduleRepository.save(schedule);

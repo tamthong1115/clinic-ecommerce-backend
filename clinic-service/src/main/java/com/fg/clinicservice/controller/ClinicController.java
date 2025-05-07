@@ -39,7 +39,7 @@ public class ClinicController {
     }
 
 
-    @PostMapping("/{clinic_id}")
+    @PostMapping("/{clinic_id}/create-doctor")
     public ResponseEntity<DoctorDetailResponse> createDoctorWithClinicId(
             @PathVariable UUID clinic_id,
             @Valid @RequestBody DoctorRequest doctorRequest) {
@@ -52,7 +52,7 @@ public class ClinicController {
         return new ResponseEntity<>(doctorService.createDoctor(null, doctorRequest), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{clinic_id}/doctor/{id}")
     public ResponseEntity<Void> deleteDoctor(@PathVariable UUID id) {
         doctorService.deleteDoctor(id);
         return ResponseEntity.noContent().build();

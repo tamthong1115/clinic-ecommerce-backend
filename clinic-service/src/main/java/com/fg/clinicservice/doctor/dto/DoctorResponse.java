@@ -12,5 +12,5 @@ import java.util.UUID;
 public class DoctorResponse extends DoctorDTO {
     private List<DoctorCertificationDTO> certifications;
     private List<DoctorScheduleDTO> schedules;
-    private List<UUID> clinicIds;
+    private UUID clinicIds;
 } 

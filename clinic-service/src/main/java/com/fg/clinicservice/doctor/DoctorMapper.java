@@ -12,7 +12,7 @@ import com.fg.clinicservice.schedule.model.DoctorSchedule;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
-
+import java.util.Collections;
 @Component
 public class DoctorMapper {
 
@@ -61,10 +61,8 @@ public class DoctorMapper {
                     .collect(Collectors.toList()));
         }
 
-        if (doctor.getDoctorClinics() != null) {
-            response.setClinicIds(doctor.getDoctorClinics().stream()
-                    .map(dc -> dc.getClinicId())
-                    .collect(Collectors.toList()));
+        if (doctor.getClinic() != null) {
+            response.setClinicIds(doctor.getClinic().getClinicId());
         }
 
         return response;

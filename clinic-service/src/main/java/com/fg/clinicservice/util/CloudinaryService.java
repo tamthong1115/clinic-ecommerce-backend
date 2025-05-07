@@ -1,4 +1,4 @@
-package com.fg.clinicservice.service;
+package com.fg.clinicservice.util;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;

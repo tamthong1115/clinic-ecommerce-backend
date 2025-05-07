@@ -14,5 +14,5 @@ public class DoctorDetailResponse extends DoctorBasicResponse {
     private String education;
     private List<DoctorCertificationDTO> certifications;
     private List<DoctorScheduleDTO> schedules;
-    private List<UUID> clinicIds;
+    private UUID clinicIds;
 } 

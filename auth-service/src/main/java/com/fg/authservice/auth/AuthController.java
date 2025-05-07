@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -88,5 +89,15 @@ public class AuthController {
         return ResponseEntity.ok(userDTO);
     }
 
-
+    @Operation(summary = "Delete a user")
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<ResponseData<Void>> deleteUser(@PathVariable UUID userId) {
+        try {
+            authService.deleteUser(userId);
+            return ResponseEntity.ok(ResponseData.success("User deleted successfully", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseData.error("Failed to delete user: " + e.getMessage()));
+        }
+    }
 }

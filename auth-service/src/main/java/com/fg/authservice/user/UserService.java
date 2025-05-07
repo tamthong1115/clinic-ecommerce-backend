@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,5 +23,13 @@ public class UserService {
 
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public Optional<User> findById(UUID userId) {
+        return userRepository.findById(userId);
+    }
+
+    public void delete(User user) {
+        userRepository.delete(user);
     }
 }

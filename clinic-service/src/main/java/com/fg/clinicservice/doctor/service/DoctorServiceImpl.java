@@ -10,9 +10,10 @@ import com.fg.clinicservice.doctor.dto.DoctorBasicResponse;
 import com.fg.clinicservice.doctor.dto.DoctorDetailResponse;
 import com.fg.clinicservice.doctor.dto.DoctorRequest;
 import com.fg.clinicservice.doctor.model.Doctor;
-import com.fg.clinicservice.doctor.repository.DoctorClinicRepository;
+import com.fg.clinicservice.clinic.model.Clinic;
 import com.fg.clinicservice.doctor.repository.DoctorRepository;
 import com.fg.clinicservice.exception.ResourceNotFoundException;
+import com.fg.clinicservice.exception.UserAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,6 @@ import java.util.stream.Collectors;
 public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
-    private final DoctorClinicRepository doctorClinicRepository;
     private final DoctorMapper doctorMapper;
     private final AuthClient authClient;
 
@@ -39,7 +39,7 @@ public class DoctorServiceImpl implements DoctorService {
     public DoctorDetailResponse createDoctor(UUID ClinicId, DoctorRequest doctorRequest) {
         ResponseEntity<Boolean> emailCheckResponse = authClient.checkEmailExists(doctorRequest.getEmail());
         if (Boolean.TRUE.equals(emailCheckResponse.getBody())) {
-            throw new RuntimeException("Email already exists in the system");
+            throw new UserAlreadyExistsException("Email already exists: " + doctorRequest.getEmail());
         }
 
         RegisterRequestWithRoleDTO registerRequest = RegisterRequestWithRoleDTO.builder()
@@ -54,14 +54,15 @@ public class DoctorServiceImpl implements DoctorService {
         }
 
         Doctor doctor = doctorMapper.toEntity(doctorRequest);
-        Doctor savedDoctor = doctorRepository.save(doctor);
+
+        doctor.setUserId(userResponse.getBody().getUserId());
 
         if (ClinicId != null) {
-            DoctorClinic doctorClinic = new DoctorClinic();
-            doctorClinic.setDoctor(savedDoctor);
-            doctorClinic.setClinicId(ClinicId);
-            doctorClinicRepository.save(doctorClinic);
+            Clinic clinic = new Clinic();
+            clinic.setClinicId(ClinicId);
+            doctor.setClinic(clinic);
         }
+        Doctor savedDoctor = doctorRepository.save(doctor);
 
         return doctorMapper.toDetailResponse(savedDoctor);
     }
