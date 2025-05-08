@@ -41,4 +41,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, UUID>, JpaSpecif
             @Param("availableFrom") LocalDateTime availableFrom,
             @Param("availableTo") LocalDateTime availableTo,
             Pageable pageable);
+
+    Optional<Doctor> findByUserId(UUID userId);
 }
