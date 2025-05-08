@@ -59,7 +59,7 @@ public class DoctorMapper {
         }
 
         if (doctor.getClinic() != null) {
-            response.setClinicIds(doctor.getClinic().getClinicId());
+            response.setClinicId(doctor.getClinic().getClinicId());
         }
 
         return response;
@@ -76,7 +76,6 @@ public class DoctorMapper {
         doctor.setEmail(request.getEmail());
         doctor.setPhone(request.getPhone());
         doctor.setGender(request.getGender());
-        doctor.setProfilePicture(request.getProfilePicture());
         doctor.setExperienceYears(request.getExperienceYears());
         doctor.setEducation(request.getEducation());
 
@@ -127,7 +126,6 @@ public class DoctorMapper {
         doctor.setEmail(request.getEmail());
         doctor.setPhone(request.getPhone());
         doctor.setGender(request.getGender());
-        doctor.setProfilePicture(request.getProfilePicture());
         doctor.setExperienceYears(request.getExperienceYears());
         doctor.setEducation(request.getEducation());
     }
@@ -188,4 +186,7 @@ public class DoctorMapper {
 
         return response;
     }
+
+
+
 }

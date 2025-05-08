@@ -15,6 +15,7 @@ import com.fg.clinicservice.exception.UserAlreadyExistsException;
 import com.fg.clinicservice.schedule.model.DoctorSchedule;
 import com.fg.clinicservice.service_clinic.model.EService;
 import com.fg.clinicservice.speciality.model.Speciality;
+import com.fg.clinicservice.util.CloudinaryService;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.criteria.Predicate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,6 +41,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
     private final DoctorMapper doctorMapper;
     private final AuthClient authClient;
+    private final CloudinaryService cloudinaryService;
 
     private final static String DEFAULT_PASSWORD = "Doctor@123";
     private final static String ROLE_DOCTOR = Role.DOCTOR.name();
@@ -62,8 +66,32 @@ public class DoctorServiceImpl implements DoctorService {
         }
 
         Doctor doctor = doctorMapper.toEntity(doctorRequest);
+        String defaultProfilePicture = null;
+        if(doctorRequest.getGender().toUpperCase() == "MALE"){
+            defaultProfilePicture = "https://res.cloudinary.com/dulzekaen/image/upload/v1746699451/flat-style-vector-illustration-medical-illustrator_1033579-58110_grznrx.avif";
+        } else if(doctorRequest.getGender().toUpperCase() == "FEMALE"){
+            defaultProfilePicture = "https://res.cloudinary.com/dulzekaen/image/upload/v1746700376/istockphoto-1190555586-1024x1024_wucd29.jpg";
+        }else{
+            defaultProfilePicture= "https://res.cloudinary.com/dulzekaen/image/upload/v1746700456/images_s1mhzv.png";
+        }
+
+
+        if (doctorRequest.getProfilePicture() != null && !doctorRequest.getProfilePicture().isEmpty()) {
+            try {
+                // Delete existing profile picture if present
+                if (doctor.getProfilePicture() != null && !doctor.getProfilePicture().isEmpty()) {
+                    cloudinaryService.deleteImage(doctor.getProfilePicture());
+                }
+
+                // Upload new profile picture and get URL
+                defaultProfilePicture = cloudinaryService.uploadDoctorProfilePicture(doctorRequest.getProfilePicture());
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to upload doctor profile picture", e);
+            }
+        }
 
         doctor.setUserId(userResponse.getBody().getUserId());
+        doctor.setProfilePicture(defaultProfilePicture);
 
         if (ClinicId != null) {
             Clinic clinic = new Clinic();
@@ -204,5 +232,88 @@ public class DoctorServiceImpl implements DoctorService {
         // Map results to DTOs
         return doctorsPage.map(doctorMapper::toSearchResponse);
     }
+
+    @Override
+    public Page<DoctorBasicResponse> searchDoctorsBasic(DoctorSearchCriteria criteria) {
+        // Build the specification for filtering based on criteria
+        Specification<Doctor> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (criteria.getName() != null && !criteria.getName().isEmpty()) {
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.like(
+                                criteriaBuilder.lower(root.get("firstName")),
+                                "%" + criteria.getName().toLowerCase() + "%"
+                        ),
+                        criteriaBuilder.like(
+                                criteriaBuilder.lower(root.get("lastName")),
+                                "%" + criteria.getName().toLowerCase() + "%"
+                        )
+                ));
+            }
+
+            if (criteria.getClinicId() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("clinic").get("clinicId"), criteria.getClinicId()));
+            }
+
+            if (criteria.getSpecializationName() != null && !criteria.getSpecializationName().isEmpty()) {
+                Join<Doctor, Speciality> specialityJoin = root.join("specialities", JoinType.INNER);
+                predicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(specialityJoin.get("name")),
+                        "%" + criteria.getSpecializationName().toLowerCase() + "%"
+                ));
+            }
+
+            if (criteria.getServiceName() != null && !criteria.getServiceName().isEmpty()) {
+                Join<Doctor, EService> serviceJoin = root.join("services", JoinType.INNER);
+                predicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(serviceJoin.get("name")),
+                        "%" + criteria.getServiceName().toLowerCase() + "%"
+                ));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        // Create pageable object
+        Pageable pageable = PageRequest.of(
+                criteria.getPage(),
+                criteria.getSize(),
+                Sort.by(criteria.getSortDirection(), criteria.getSortBy())
+        );
+
+        // Query the database
+        Page<Doctor> doctorPage = doctorRepository.findAll(specification, pageable);
+
+        return doctorPage.map(doctorMapper::toBasicResponse);
+    }
+
+    @Override
+    public Page<DoctorBasicResponse> getAllDoctorsBasic(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return doctorRepository.findAll(pageable)
+                .map(doctorMapper::toBasicResponse);
+    }
+
+    @Override
+    public Page<DoctorBasicResponse> getDoctorsByClinicBasic(UUID clinicId, int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Specification<Doctor> spec = (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("clinic").get("clinicId"), clinicId);
+
+        return doctorRepository.findAll(spec, pageable)
+                .map(doctorMapper::toBasicResponse);
+    }
+
 
 }

@@ -1,6 +1,8 @@
 package com.fg.clinicservice.clinic.service;
 
 import com.fg.clinicservice.clinic.model.Clinic;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +20,5 @@ public interface ClinicRepository extends JpaRepository<Clinic, UUID> {
     @Modifying
     @Query("UPDATE Clinic c SET c.status= :status WHERE c.clinicId= :clinicId")
     void updateStatus(@Param("clinicId") UUID clinicId, @Param("status") Clinic.Status status);
+    Page<Clinic> findByOwner_OwnerId(UUID ownerId, Pageable pageable);
 }
