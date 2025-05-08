@@ -4,6 +4,8 @@ import com.fg.clinicservice.clinic.dto.ClinicDTO;
 import com.fg.clinicservice.clinic.service.IClinicService;
 import com.fg.clinicservice.doctor.dto.DoctorBasicResponse;
 import com.fg.clinicservice.doctor.dto.DoctorDetailResponse;
+import com.fg.clinicservice.doctor.dto.DoctorSearchCriteria;
+import com.fg.clinicservice.doctor.dto.DoctorSearchResponse;
 import com.fg.clinicservice.doctor.service.DoctorService;
 import com.fg.clinicservice.response.ResponseData;
 import com.fg.clinicservice.service_clinic.model.ServiceDto;
@@ -63,7 +65,7 @@ public class PublicController {
             @RequestParam(defaultValue = "12") int size
     ) {
         Page<ServiceDto> servicePage = iService.getAllServices(PageRequest.of(page, size));
-        return ResponseEntity.ok(new ResponseData<>(200, "Lấy danh sách dịch vụ thành công", servicePage));
+        return ResponseEntity.ok(new ResponseData<>(200, "Services retrieved successfully", servicePage));
     }
 
     @Operation(summary = "Get service by ID")
@@ -102,7 +104,7 @@ public class PublicController {
             @RequestParam (defaultValue = "12") int size
     ) {
         Page<SpecialityDto> responseData = iSpecialityService.getAllSpeciality(PageRequest.of(page, size));
-        return ResponseEntity.ok(new ResponseData<>(200, "Lấy danh sách chuyên khoa thành công"     , responseData));
+        return ResponseEntity.ok(new ResponseData<>(200, "Specialities retrieved successfully", responseData));
     }
 
     @Operation(summary = "Get speciality by id")
@@ -120,7 +122,7 @@ public class PublicController {
             @RequestParam(defaultValue = "12") int size
     ) {
         Page<ServiceDto> responseData = iService.getAllServiceBySpeciality(id, PageRequest.of(page, size));
-        return ResponseEntity.ok(new ResponseData<>(200, "Lấy danh sách dịch vụ thành công", responseData));
+        return ResponseEntity.ok(new ResponseData<>(200, "Get service by specialityId successfully", responseData));
     }
 
     @Operation(summary = "Search service with filter")
@@ -131,6 +133,14 @@ public class PublicController {
             @RequestParam(defaultValue = "12") int size
     ) {
         Page<ServiceDto> searchResults = iService.searchServices(criteria, PageRequest.of(page, size));
-        return ResponseEntity.ok(new ResponseData<>(200, "Lấy danh sách dịch vụ thành công", searchResults));
+        return ResponseEntity.ok(new ResponseData<>(200, "Search service successfully", searchResults));
+    }
+
+    @Operation(summary = "Search doctors with filters")
+    @GetMapping("/search-doctors")
+    public ResponseEntity<ResponseData<Page<DoctorSearchResponse>>> searchDoctors(
+            DoctorSearchCriteria criteria) {
+        Page<DoctorSearchResponse> searchResults = doctorService.searchDoctors(criteria);
+        return ResponseEntity.ok(new ResponseData<>(200, "Search doctors successfully", searchResults));
     }
 }

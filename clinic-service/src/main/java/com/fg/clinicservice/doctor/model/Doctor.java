@@ -2,6 +2,8 @@ package com.fg.clinicservice.doctor.model;
 
 import com.fg.clinicservice.clinic.model.Clinic;
 import com.fg.clinicservice.schedule.model.DoctorSchedule;
+import com.fg.clinicservice.service_clinic.model.EService;
+import com.fg.clinicservice.service_clinic.service.IService;
 import com.fg.clinicservice.speciality.model.Speciality;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -57,4 +59,13 @@ public class Doctor {
             inverseJoinColumns = @JoinColumn(name = "speciality_id")
     )
     private Set<Speciality> specialities = new HashSet<>();
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "doctor_service",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private Set<EService> services = new HashSet<>();
 }
