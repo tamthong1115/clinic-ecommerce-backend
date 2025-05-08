@@ -1,10 +1,7 @@
 package com.fg.clinicservice.doctor;
 
 
-import com.fg.clinicservice.doctor.dto.DoctorBasicResponse;
-import com.fg.clinicservice.doctor.dto.DoctorCertificationDTO;
-import com.fg.clinicservice.doctor.dto.DoctorDetailResponse;
-import com.fg.clinicservice.doctor.dto.DoctorRequest;
+import com.fg.clinicservice.doctor.dto.*;
 import com.fg.clinicservice.doctor.model.Doctor;
 import com.fg.clinicservice.doctor.model.DoctorCertification;
 import com.fg.clinicservice.schedule.dto.DoctorScheduleDTO;
@@ -133,5 +130,62 @@ public class DoctorMapper {
         doctor.setProfilePicture(request.getProfilePicture());
         doctor.setExperienceYears(request.getExperienceYears());
         doctor.setEducation(request.getEducation());
+    }
+
+
+    public DoctorSearchResponse toSearchResponse(Doctor doctor) {
+        if (doctor == null) {
+            return null;
+        }
+
+        DoctorSearchResponse response = new DoctorSearchResponse();
+        response.setId(doctor.getId());
+        response.setFirstName(doctor.getFirstName());
+        response.setLastName(doctor.getLastName());
+        response.setProfilePicture(doctor.getProfilePicture());
+        response.setExperienceYears(doctor.getExperienceYears());
+        response.setEducation(doctor.getEducation());
+
+        // Map services
+        if (doctor.getServices() != null) {
+            response.setServices(doctor.getServices().stream()
+                    .map(service -> {
+                        DoctorSearchResponse.ServiceInfo serviceInfo = new DoctorSearchResponse.ServiceInfo();
+                        serviceInfo.setId(service.getServiceId());
+                        serviceInfo.setName(service.getServiceName());
+                        serviceInfo.setPrice(service.getPrice());
+                        return serviceInfo;
+                    })
+                    .collect(Collectors.toSet()));
+        } else {
+            response.setServices(Collections.emptySet());
+        }
+
+        // Map schedules
+        if (doctor.getDoctorSchedules() != null) {
+            response.setSchedules(doctor.getDoctorSchedules().stream()
+                    .map(schedule -> {
+                        DoctorSearchResponse.ScheduleInfo scheduleInfo = new DoctorSearchResponse.ScheduleInfo();
+                        scheduleInfo.setId(schedule.getId());
+                        scheduleInfo.setDayOfWeek(schedule.getDayOfWeek());
+                        scheduleInfo.setStartTime(schedule.getStartTime());
+                        scheduleInfo.setEndTime(schedule.getEndTime());
+                        return scheduleInfo;
+                    })
+                    .collect(Collectors.toList()));
+        } else {
+            response.setSchedules(Collections.emptyList());
+        }
+
+        // Map clinic
+        if (doctor.getClinic() != null) {
+            DoctorSearchResponse.ClinicInfo clinicInfo = new DoctorSearchResponse.ClinicInfo();
+            clinicInfo.setId(doctor.getClinic().getClinicId());
+            clinicInfo.setName(doctor.getClinic().getClinicName());
+            clinicInfo.setAddress(doctor.getClinic().getClinicAddress());
+            response.setClinic(clinicInfo);
+        }
+
+        return response;
     }
 }
