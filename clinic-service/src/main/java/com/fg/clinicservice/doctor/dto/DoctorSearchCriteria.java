@@ -10,6 +10,8 @@ public class DoctorSearchCriteria {
     private String name;
     private UUID specialityId;
     private UUID serviceId;
+    private String specializationName;
+    private String serviceName;
     private UUID clinicId;
     private Integer minExperience;
     private Integer maxExperience;
