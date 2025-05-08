@@ -1,5 +1,7 @@
 package com.fg.clinicservice.schedule.service;
 
+import com.fg.clinicservice.client.user.AuthClient;
+import com.fg.clinicservice.client.user.UserDTO;
 import com.fg.clinicservice.schedule.dto.DoctorScheduleDTO;
 import com.fg.clinicservice.schedule.dto.DoctorScheduleRequest;
 import com.fg.clinicservice.schedule.model.DoctorSchedule;
@@ -27,6 +29,7 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
     private final DoctorScheduleRepository doctorScheduleRepository;
     private final DoctorRepository doctorRepository;
     private final DoctorMapper doctorMapper;
+    private final AuthClient authClient;
 
     @Override
     @Transactional
@@ -71,7 +74,15 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<DoctorScheduleDTO> getDoctorSchedules(UUID doctorId) {
+    public List<DoctorScheduleDTO> getDoctorSchedules() {
+        //Get current authenticated user
+        UserDTO user = authClient.getCurrentUser().getBody();
+
+        // Get doctor by userId
+        Doctor doctor = doctorRepository.findByUserId(user.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with userId: " + user.getUserId()));
+        UUID doctorId = doctor.getId();
+
         return doctorScheduleRepository.findByDoctorId(doctorId).stream()
                 .map(doctorMapper::toScheduleDTO)
                 .collect(Collectors.toList());
@@ -93,10 +104,6 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
         return doctorMapper.toScheduleDTO(schedule);
     }
 
-
-    public List<DoctorSchedule> getSchedulesByDoctorId(UUID doctorId) {
-        return doctorScheduleRepository.findByDoctorIdAndIsActiveTrue(doctorId);
-    }
 
 
     public List<TimeSlot> getAvailableTimeSlots(UUID doctorId, LocalDate date) {

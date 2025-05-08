@@ -429,3 +429,26 @@ INSERT INTO doctor_speciality (doctor_id, speciality_id) VALUES
                                                              ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'f5c101d2-9f2a-46c0-b541-b1c09c1a1b01'), -- General medicine
                                                              ('b2c3d4e5-f678-90ab-cdef-234567890abc', 'f5c101d2-9f2a-46c0-b541-b1c09c1a1b06')  -- Dermatology
 ON CONFLICT (doctor_id, speciality_id) DO NOTHING;
+
+-- Sample data for doctor_schedule
+INSERT INTO doctor_schedule (
+    id,
+    doctor_id,
+    clinic_id,
+    day_of_week,
+    start_time,
+    end_time,
+    slot_duration_minutes,
+    break_minutes_between_slots,
+    is_active
+) VALUES
+    -- Doctor John Doe's schedule
+    ('1a2b3c4d-5e6f-7890-abcd-ef1234567890', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'MONDAY', '08:00:00', '12:00:00', 30, 10, TRUE),
+    ('2b3c4d5e-6f7g-890a-bcde-f12345678901', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'WEDNESDAY', '13:00:00', '17:00:00', 30, 10, TRUE),
+    ('3c4d5e6f-7g8h-90ab-cdef-234567890abc', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'FRIDAY', '08:00:00', '12:00:00', 30, 10, TRUE),
+
+    -- Doctor Jane Smith's schedule
+    ('4d5e6f7g-8h9i-0abc-def1-34567890abcd', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'TUESDAY', '09:00:00', '12:00:00', 45, 15, TRUE),
+    ('5e6f7g8h-9i0j-abcd-ef12-4567890abcde', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'THURSDAY', '14:00:00', '18:00:00', 45, 15, TRUE),
+    ('6f7g8h9i-0j1k-bcde-f123-567890abcdef', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'SATURDAY', '10:00:00', '14:00:00', 45, 15, TRUE)
+ON CONFLICT (id) DO NOTHING;

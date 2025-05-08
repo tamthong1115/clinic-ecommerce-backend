@@ -30,11 +30,10 @@ public class DoctorController {
         return ResponseEntity.ok(doctorService.updateDoctor(id, doctorRequest));
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<UserDTO> getCurrentUser() {
-        return ResponseEntity.ok(doctorService.getCurrentUser());
+    @GetMapping("/get-schedules")
+    public ResponseEntity<List<DoctorScheduleDTO>> getDoctorSchedules() {
+        return ResponseEntity.ok(scheduleService.getDoctorSchedules());
     }
-
     @PostMapping("/{doctorId}/schedules")
     public ResponseEntity<DoctorScheduleDTO> createSchedule(
             @PathVariable UUID doctorId,
@@ -54,11 +53,6 @@ public class DoctorController {
     public ResponseEntity<Void> deleteSchedule(@PathVariable UUID scheduleId) {
         scheduleService.deleteSchedule(scheduleId);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{doctorId}/schedules")
-    public ResponseEntity<List<DoctorScheduleDTO>> getClinicSchedules(@PathVariable UUID clinicID) {
-        return ResponseEntity.ok(scheduleService.getClinicSchedules(clinicID));
     }
 
     @GetMapping("/{doctorId}/schedules/{scheduleId}")
