@@ -430,6 +430,21 @@ INSERT INTO doctor_speciality (doctor_id, speciality_id) VALUES
                                                              ('b2c3d4e5-f678-90ab-cdef-234567890abc', 'f5c101d2-9f2a-46c0-b541-b1c09c1a1b06')  -- Dermatology
 ON CONFLICT (doctor_id, speciality_id) DO NOTHING;
 
+CREATE TABLE IF NOT EXISTS doctor_schedule (
+    id UUID PRIMARY KEY,
+    doctor_id UUID NOT NULL,
+    clinic_id UUID NOT NULL,
+    day_of_week VARCHAR(20) NOT NULL CHECK (day_of_week IN ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY')),
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    slot_duration_minutes INT NOT NULL DEFAULT 60,
+    break_minutes_between_slots INT NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    CONSTRAINT fk_doctor FOREIGN KEY (doctor_id) REFERENCES doctor(id) ON DELETE CASCADE,
+    CONSTRAINT fk_clinic FOREIGN KEY (clinic_id) REFERENCES clinic(id) ON DELETE CASCADE,
+    CONSTRAINT check_times CHECK (start_time < end_time)
+);
+
 -- Sample data for doctor_schedule
 INSERT INTO doctor_schedule (
     id,
