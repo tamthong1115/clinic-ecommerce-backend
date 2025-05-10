@@ -458,12 +458,12 @@ INSERT INTO doctor_schedule (
     is_active
 ) VALUES
     -- Doctor John Doe's schedule
-    ('1a2b3c4d-5e6f-7890-abcd-ef1234567890', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'MONDAY', '08:00:00', '12:00:00', 30, 10, TRUE),
-    ('2b3c4d5e-6f7g-890a-bcde-f12345678901', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'WEDNESDAY', '13:00:00', '17:00:00', 30, 10, TRUE),
-    ('3c4d5e6f-7g8h-90ab-cdef-234567890abc', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'FRIDAY', '08:00:00', '12:00:00', 30, 10, TRUE),
+    ('307d75c0-3810-497a-845a-71ef69eb5516', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'MONDAY', '08:00:00', '12:00:00', 30, 10, TRUE),
+    ('eb31d12c-07bf-482a-b914-d8e676c26046', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'WEDNESDAY', '13:00:00', '17:00:00', 30, 10, TRUE),
+    ('e7263444-5c09-4a7a-917a-87bb07d4d10b', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'FRIDAY', '08:00:00', '12:00:00', 30, 10, TRUE),
 
     -- Doctor Jane Smith's schedule
-    ('4d5e6f7g-8h9i-0abc-def1-34567890abcd', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'TUESDAY', '09:00:00', '12:00:00', 45, 15, TRUE),
-    ('5e6f7g8h-9i0j-abcd-ef12-4567890abcde', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'THURSDAY', '14:00:00', '18:00:00', 45, 15, TRUE),
-    ('6f7g8h9i-0j1k-bcde-f123-567890abcdef', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'SATURDAY', '10:00:00', '14:00:00', 45, 15, TRUE)
+    ('484fe408-88c6-4a36-a323-b2cf0c8f1d01', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'TUESDAY', '09:00:00', '12:00:00', 45, 15, TRUE),
+    ('8d78385e-1b9e-484f-8fe2-0e63d170650f', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'THURSDAY', '14:00:00', '18:00:00', 45, 15, TRUE),
+    ('3aab909e-67c0-4fa7-93ac-537f4b22efba', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'SATURDAY', '10:00:00', '14:00:00', 45, 15, TRUE)
 ON CONFLICT (id) DO NOTHING;
