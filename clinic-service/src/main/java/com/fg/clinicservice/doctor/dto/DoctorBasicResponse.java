@@ -18,5 +18,7 @@ public class DoctorBasicResponse {
     private String phone;
     private String gender;
     private String profilePicture;
+    private Integer experienceYears;
+    private String education;
     private Doctor.DoctorStatus status;
 } 

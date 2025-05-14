@@ -132,13 +132,13 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional
-    public DoctorDetailResponse updateDoctor(UUID id, DoctorRequest doctorRequest) {
+    public DoctorDTO updateDoctor(UUID id, DoctorRequest doctorRequest) {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
 
         doctorMapper.updateEntity(doctor, doctorRequest);
         Doctor updatedDoctor = doctorRepository.save(doctor);
-        return doctorMapper.toDetailResponse(updatedDoctor);
+        return doctorMapper.toDoctorDTO(updatedDoctor);
     }
 
     @Override

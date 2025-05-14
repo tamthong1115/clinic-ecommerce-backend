@@ -12,7 +12,7 @@ public interface DoctorService {
     DoctorDetailResponse createDoctor(UUID clinicId, DoctorRequest doctorRequest);
     DoctorDetailResponse getDoctorById(UUID id);
     List<DoctorBasicResponse> getAllDoctors();
-    DoctorDetailResponse updateDoctor(UUID id, DoctorRequest doctorRequest);
+    DoctorDTO updateDoctor(UUID id, DoctorRequest doctorRequest);
     void deleteDoctor(UUID id);
     UserDTO getCurrentUser();
     UUID getDoctorIdByUserId(UUID userId);

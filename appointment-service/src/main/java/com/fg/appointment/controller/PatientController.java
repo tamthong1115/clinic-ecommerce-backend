@@ -32,8 +32,8 @@ public class PatientController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AppointmentDTO>> getAllAppointments(@RequestParam UUID patientId) {
-        List<AppointmentDTO> appointments = appointmentService.getAppointmentsByPatientId(patientId);
+    public ResponseEntity<List<AppointmentDTO>> getAllAppointments(@RequestParam UUID userId) {
+        List<AppointmentDTO> appointments = appointmentService.getAppointmentsByPatientId(userId);
         return ResponseEntity.ok(appointments);
     }
 }

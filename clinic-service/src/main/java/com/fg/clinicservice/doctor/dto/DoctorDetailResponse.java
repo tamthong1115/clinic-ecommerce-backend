@@ -14,8 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DoctorDetailResponse extends DoctorBasicResponse {
-    private Integer experienceYears;
-    private String education;
+
     private List<DoctorCertificationDTO> certifications;
     private List<DoctorScheduleDTO> schedules;
     private UUID clinicId;

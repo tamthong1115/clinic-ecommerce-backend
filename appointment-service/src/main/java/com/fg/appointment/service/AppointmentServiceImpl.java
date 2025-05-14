@@ -94,7 +94,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
-    public List<AppointmentDTO> getAppointmentsByPatientId(UUID patientId) {
+    public List<AppointmentDTO> getAppointmentsByPatientId(UUID userId) {
+
+        // Get patientId from userId using the client
+        DoctorIdResponse response = clinicClient.getPatientIdByUserId(userId);
+
         List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
         return appointments.stream()
                 .map(this::toDTO)

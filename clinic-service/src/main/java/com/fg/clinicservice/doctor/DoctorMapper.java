@@ -27,6 +27,8 @@ public class DoctorMapper {
         response.setGender(doctor.getGender());
         response.setProfilePicture(doctor.getProfilePicture());
         response.setStatus(doctor.getStatus());
+        response.setExperienceYears(doctor.getExperienceYears());
+        response.setEducation(doctor.getEducation());
 
         return response;
     }
@@ -136,6 +138,26 @@ public class DoctorMapper {
         doctor.setGender(request.getGender());
         doctor.setExperienceYears(request.getExperienceYears());
         doctor.setEducation(request.getEducation());
+    }
+
+    public DoctorDTO toDoctorDTO(Doctor doctor) {
+        if (doctor == null) {
+            return null;
+        }
+
+        DoctorDTO dto = new DoctorDTO();
+        dto.setId(doctor.getId());
+        dto.setFirstName(doctor.getFirstName());
+        dto.setLastName(doctor.getLastName());
+        dto.setGender(doctor.getGender());
+        dto.setEmail(doctor.getEmail());
+        dto.setPhone(doctor.getPhone());
+        dto.setProfilePicture(doctor.getProfilePicture());
+        dto.setExperienceYears(doctor.getExperienceYears());
+        dto.setEducation(doctor.getEducation());
+
+
+        return dto;
     }
 
 
