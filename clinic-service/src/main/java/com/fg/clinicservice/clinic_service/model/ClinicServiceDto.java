@@ -16,4 +16,8 @@ public class ClinicServiceDto {
     private UUID clinicId;
     private UUID serviceId;
     private String status;
+    private String clinicName;
+    private String serviceName;
+    private UUID specialtyId;
+    private String specialtyName;
 }

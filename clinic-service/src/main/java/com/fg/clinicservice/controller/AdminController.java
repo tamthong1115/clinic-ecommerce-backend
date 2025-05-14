@@ -16,6 +16,7 @@ import com.fg.clinicservice.special_requirement.service.SpecialRequirementServic
 import com.fg.clinicservice.speciality.model.SpecialityDto;
 import com.fg.clinicservice.speciality.model.SpecialityForm;
 import com.fg.clinicservice.speciality.service.ISpecialityService;
+import feign.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -48,15 +49,6 @@ public class AdminController {
     public ResponseData<ClinicOwnerDTO> createClinicOwner(@RequestBody CreateClinicOwnerRequest request) {
         return iClinicService.createClinicOwner(request);
     }
-
-    @Operation(summary = "Create new clinic for owner")
-    @PostMapping("/create-clinic")
-    public ResponseEntity<ResponseData<ClinicDTO>> CreateClinic(@RequestBody ClinicForm clinicForm) {
-        ResponseData<ClinicDTO> response = iClinicService.createNewClinic(clinicForm);
-        return ResponseEntity.ok(response);
-    }
-
-
 
     @Operation(summary = "Add new special requirement for service")
     @PostMapping("/sr/add-new")
@@ -108,4 +100,24 @@ public class AdminController {
         ResponseData<SpecialityDto> responseData = iSpecialityService.updateSpeciality(id, specialityForm);
         return ResponseEntity.ok(responseData);
     }
+
+    @Operation(summary = "Get owner infor by clinicId")
+    @GetMapping("/get-owner/{id}")
+    public ResponseEntity<ResponseData<ClinicOwnerDTO>> getOwner(@PathVariable UUID id) {
+        ResponseData<ClinicOwnerDTO> responseData = iClinicService.getClinicOwnerByClinicId(id);
+        return ResponseEntity.ok(responseData);
+    }
+
+    @Operation(summary = "Get all owner")
+    @GetMapping("/get-owner")
+    public ResponseEntity<ResponseData<Page<ClinicOwnerDTO>>> getAllOwner(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "lastName") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        ResponseData<Page<ClinicOwnerDTO>> response = iClinicService.getAllClinicOwner(page, size, sortBy, direction);
+        return ResponseEntity.ok(response);
+    }
+
 }
