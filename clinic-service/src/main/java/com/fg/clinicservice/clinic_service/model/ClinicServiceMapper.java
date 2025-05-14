@@ -14,6 +14,10 @@ public class ClinicServiceMapper {
         dto.setClinicId(clinicService.getClinic().getClinicId());
         dto.setServiceId(clinicService.getService().getServiceId());
         dto.setStatus(clinicService.getStatus().name());
+        dto.setServiceName(clinicService.getService().getServiceName());
+        dto.setClinicName(clinicService.getClinic().getClinicName());
+        dto.setSpecialtyId(clinicService.getService().getSpeciality().getSpecialityId());
+        dto.setSpecialtyName(clinicService.getService().getSpeciality().getSpecialityName());
         return dto;
     }
 

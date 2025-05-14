@@ -91,15 +91,15 @@ public class ClinicController {
 
     @Operation(summary = "update status for service in clinic")
     @PutMapping("/service-for-clinic/status")
-    public ResponseEntity<ResponseData<String>> updateServiceStatus(@RequestBody ClinicServiceForm clinicServiceForm) {
-        ResponseData<String> responseData = iClinicService2.update(clinicServiceForm);
+    public ResponseEntity<ResponseData<ClinicServiceDto>> updateServiceStatus(@RequestBody ClinicServiceForm clinicServiceForm) {
+        ResponseData<ClinicServiceDto> responseData = iClinicService2.update(clinicServiceForm);
         return ResponseEntity.ok(responseData);
     }
 
     @Operation(summary = "get all service in clinic")
     @GetMapping("/get-service/{id}")
-    public ResponseEntity<ResponseData<List<ServiceDTO_Clinic>>> getServiceById(@PathVariable UUID id) {
-        ResponseData<List<ServiceDTO_Clinic>> response = iClinicService2.getByClinic(id);
+    public ResponseEntity<ResponseData<List<ClinicServiceDto>>> getServiceById(@PathVariable UUID id) {
+        ResponseData<List<ClinicServiceDto>> response = iClinicService2.getByClinic(id);
         return  ResponseEntity.ok(response);
     }
 }

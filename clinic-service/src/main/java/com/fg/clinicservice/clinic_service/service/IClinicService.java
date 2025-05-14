@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface IClinicService {
     ResponseData<ClinicServiceDto> createClinic(ClinicServiceForm clinicServiceForm);
-    ResponseData<String> update(ClinicServiceForm clinicServiceForm);
+    ResponseData<ClinicServiceDto> update(ClinicServiceForm clinicServiceForm);
     ResponseData<List<ClinicServiceDto>> getByService(UUID serviceId);
-    ResponseData<List<ServiceDTO_Clinic>> getByClinic(UUID clinicId);
+    ResponseData<List<ClinicServiceDto>> getByClinic(UUID clinicId);
 }

@@ -1,6 +1,7 @@
 package com.fg.clinicservice.clinic_service.service;
 
 import com.fg.clinicservice.clinic.model.Clinic;
+import com.fg.clinicservice.clinic.model.ClinicMapper;
 import com.fg.clinicservice.clinic.service.ClinicRepository;
 import com.fg.clinicservice.clinic_service.model.*;
 import com.fg.clinicservice.response.ResponseData;
@@ -51,7 +52,7 @@ public class ClinicServiceImpl implements IClinicService {
     }
 
     @Override
-    public ResponseData<String> update(ClinicServiceForm clinicServiceForm) {
+    public ResponseData<ClinicServiceDto> update(ClinicServiceForm clinicServiceForm) {
         Clinic clinic = clinicRepository.findById(clinicServiceForm.getClinicId()).orElseThrow(()->new RuntimeException("Clinic not found"));
         EService service = serviceRepository.findById(clinicServiceForm.getServiceId()).orElseThrow(()->new RuntimeException("Service not found"));
         ClinicServiceId clinicServiceId = new ClinicServiceId(clinic.getClinicId(), service.getServiceId());
@@ -60,7 +61,9 @@ public class ClinicServiceImpl implements IClinicService {
         clinicService.setStatus(clinicServiceForm.getStatus());
         clinicServiceRepository.save(clinicService);
 
-        return  new ResponseData<>(200,"Clinic service updated successfully");
+        ClinicServiceDto item =  ClinicServiceMapper.toDto(clinicService);
+
+        return  new ResponseData<>(200,"Clinic service updated successfully", item);
 
     }
 
@@ -74,12 +77,11 @@ public class ClinicServiceImpl implements IClinicService {
     }
 
     @Override
-    public ResponseData<List<ServiceDTO_Clinic>> getByClinic(UUID clinicId) {
+    public ResponseData<List<ClinicServiceDto>> getByClinic(UUID clinicId) {
         List<ClinicService> list = clinicServiceRepository.findByClinic_ClinicId(clinicId);
-        List<ServiceDTO_Clinic> listService = list.stream()
+        List<ClinicServiceDto> listService = list.stream()
                 .map(item -> {
-                    EService service = item.getService();
-                    return ClinicServiceMapper.toCLinicDto(service, item);
+                    return ClinicServiceMapper.toDto(item);
                 })
                 .collect(Collectors.toList());
 
