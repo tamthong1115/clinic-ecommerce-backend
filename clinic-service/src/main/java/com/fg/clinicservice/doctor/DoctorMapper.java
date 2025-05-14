@@ -26,6 +26,7 @@ public class DoctorMapper {
         response.setPhone(doctor.getPhone());
         response.setGender(doctor.getGender());
         response.setProfilePicture(doctor.getProfilePicture());
+        response.setStatus(doctor.getStatus());
 
         return response;
     }
@@ -45,6 +46,7 @@ public class DoctorMapper {
         response.setProfilePicture(doctor.getProfilePicture());
         response.setExperienceYears(doctor.getExperienceYears());
         response.setEducation(doctor.getEducation());
+        response.setStatus(doctor.getStatus());
 
         if (doctor.getDoctorCertifications() != null) {
             response.setCertifications(doctor.getDoctorCertifications().stream()
@@ -78,6 +80,12 @@ public class DoctorMapper {
         doctor.setGender(request.getGender());
         doctor.setExperienceYears(request.getExperienceYears());
         doctor.setEducation(request.getEducation());
+
+        if(request.getStatus()!=null){
+            doctor.setStatus(request.getStatus());
+        }else{
+            doctor.setStatus(Doctor.DoctorStatus.ACTIVE);
+        }
 
         return doctor;
     }
@@ -144,20 +152,6 @@ public class DoctorMapper {
         response.setExperienceYears(doctor.getExperienceYears());
         response.setEducation(doctor.getEducation());
 
-        // Map services
-        if (doctor.getServices() != null) {
-            response.setServices(doctor.getServices().stream()
-                    .map(service -> {
-                        DoctorSearchResponse.ServiceInfo serviceInfo = new DoctorSearchResponse.ServiceInfo();
-                        serviceInfo.setId(service.getServiceId());
-                        serviceInfo.setName(service.getServiceName());
-                        serviceInfo.setPrice(service.getPrice());
-                        return serviceInfo;
-                    })
-                    .collect(Collectors.toSet()));
-        } else {
-            response.setServices(Collections.emptySet());
-        }
 
         // Map schedules
         if (doctor.getDoctorSchedules() != null) {
@@ -165,7 +159,6 @@ public class DoctorMapper {
                     .map(schedule -> {
                         DoctorSearchResponse.ScheduleInfo scheduleInfo = new DoctorSearchResponse.ScheduleInfo();
                         scheduleInfo.setId(schedule.getId());
-                        scheduleInfo.setDayOfWeek(schedule.getDayOfWeek());
                         scheduleInfo.setStartTime(schedule.getStartTime());
                         scheduleInfo.setEndTime(schedule.getEndTime());
                         return scheduleInfo;

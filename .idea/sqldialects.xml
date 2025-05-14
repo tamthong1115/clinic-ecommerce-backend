@@ -5,6 +5,8 @@
     <file url="file://$PROJECT_DIR$/clinic-service/src/main/resources/data.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/database/initdb/sql/appointment_schema.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/database/initdb/sql/clinic_schema.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/database/initdb/sql/patient_schema.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/database/initdb/sql/user_schema.sql" dialect="PostgreSQL" />
+    <file url="PROJECT" dialect="PostgreSQL" />
   </component>
 </project>

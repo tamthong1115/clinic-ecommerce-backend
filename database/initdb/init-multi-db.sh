@@ -5,12 +5,13 @@ set -e
 SCHEMAS_DIR="/schemas"
 
 # Ordered list of databases
-ordered_databases=("user" "clinic" "appointment")
+ordered_databases=("user" "clinic" "patient" "appointment")
 
 # Mapping database names to their schema files
 declare -A schemas=(
   ["user"]="user_schema.sql"
   ["clinic"]="clinic_schema.sql"
+  ["patient"]="patient_schema.sql"
   ["appointment"]="appointment_schema.sql"
 )
 

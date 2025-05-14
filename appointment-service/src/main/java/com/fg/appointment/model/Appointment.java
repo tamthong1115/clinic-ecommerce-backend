@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -58,10 +59,19 @@ public class Appointment {
     private LocalDateTime updatedAt;
 
     public enum AppointmentStatus {
-        SCHEDULED,
+        PENDING,
         CONFIRMED,
-        COMPLETED,
+        RESCHEDULED,
         CANCELLED,
+        COMPLETED,
         NO_SHOW
     }
+
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "medical_record_id", referencedColumnName = "id", nullable = true)
+    private MedicalRecords medicalRecord;
+
+    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MedicalTest> medicalTests;
 }

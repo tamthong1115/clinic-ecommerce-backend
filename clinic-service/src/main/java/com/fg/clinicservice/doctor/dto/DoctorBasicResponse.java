@@ -1,7 +1,7 @@
 package com.fg.clinicservice.doctor.dto;
 
+import com.fg.clinicservice.doctor.model.Doctor;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,4 +18,5 @@ public class DoctorBasicResponse {
     private String phone;
     private String gender;
     private String profilePicture;
+    private Doctor.DoctorStatus status;
 } 

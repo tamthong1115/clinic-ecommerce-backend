@@ -42,6 +42,15 @@ public class Doctor {
 
     private String education;
 
+
+    public enum DoctorStatus {
+        ACTIVE, INACTIVE, SUSPENDED
+    }
+
+    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'ACTIVE'")
+    @Enumerated(EnumType.STRING)
+    private DoctorStatus status = DoctorStatus.ACTIVE;
+
     @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
     private List<DoctorCertification> doctorCertifications;
 
@@ -61,7 +70,7 @@ public class Doctor {
     private Set<Speciality> specialities = new HashSet<>();
 
 
-    @ManyToMany
+    @ManyToMany( fetch = FetchType.LAZY)
     @JoinTable(
             name = "doctor_service",
             joinColumns = @JoinColumn(name = "doctor_id"),
