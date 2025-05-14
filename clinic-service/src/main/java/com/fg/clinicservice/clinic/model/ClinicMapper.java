@@ -1,6 +1,7 @@
     package com.fg.clinicservice.clinic.model;
 
     import com.fg.clinicservice.clinic.dto.ClinicDTO;
+    import com.fg.clinicservice.clinic.dto.ClinicOwnerDTO;
     import org.springframework.stereotype.Component;
 
     @Component
@@ -57,5 +58,18 @@
             clinic.setClinicPhone(form.getClinicPhone());
             clinic.setStatus(Clinic.Status.CLOSED);
             return clinic;
+        }
+
+        public static ClinicOwnerDTO toClinicOwnerDTO(ClinicOwner owner) {
+            if(owner==null) return null;
+
+            return ClinicOwnerDTO.builder()
+                    .ownerId(owner.getOwnerId())
+                    .lastName(owner.getLastName())
+                    .firstName(owner.getFirstName())
+                    .email(owner.getEmail())
+                    .phoneNumber(owner.getPhoneNumber())
+                    .address(owner.getAddress())
+                    .build();
         }
     }

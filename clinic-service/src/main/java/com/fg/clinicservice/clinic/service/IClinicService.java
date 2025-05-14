@@ -20,4 +20,6 @@ public interface IClinicService {
     ResponseData<List<ClinicDTO>> getClinicsByOwnerId();
     ResponseData<Page<ClinicDTO>> getAllClinics(int page, int size, String sortBy, String direction);
     ResponseData<Page<ClinicDTO>> getClinicsByOwnerIdWithPagination(int page, int size, String sortBy, String direction);
+    ResponseData<ClinicOwnerDTO> getClinicOwnerByClinicId(UUID clinicId);
+    ResponseData<Page<ClinicOwnerDTO>> getAllClinicOwner(int page, int size, String sortBy, String direction);
 }

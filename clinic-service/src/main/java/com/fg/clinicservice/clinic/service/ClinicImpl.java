@@ -30,7 +30,7 @@ public class ClinicImpl implements IClinicService {
     @Autowired
     CloudinaryService cloudinaryService;
 
-    private final  ClinicRepository clinicRepository;
+    private final ClinicRepository clinicRepository;
     private final ClinicOwnerRepository clinicOwnerRepository;
     private final AuthClient authClient;
     private final HttpServletRequest httpServletRequest;
@@ -81,20 +81,15 @@ public class ClinicImpl implements IClinicService {
     @Override
     public ResponseData<ClinicDTO> createNewClinic(ClinicForm clinicForm) {
         UserDTO user = authClient.getCurrentUser().getBody();
+        ClinicOwner clinicOwner = clinicOwnerRepository.findByUserId(user.getUserId());
 
         //tao clinic
         Clinic createClinic = ClinicMapper.fromForm(clinicForm);
         createClinic.setEmail(user.getEmail());
-
-        // Set owner if ownerId is provided
-        if(clinicForm.getOwnerId() != null){
-            ClinicOwner clinicOwner = clinicOwnerRepository.findById(clinicForm.getOwnerId())
-                    .orElseThrow(() -> new RuntimeException("Clinic owner not found"));
-            createClinic.setOwner(clinicOwner);
-        }
+        createClinic.setOwner(clinicOwner);
 
         //Upload anh
-        if(clinicForm.getFile() != null && !clinicForm.getFile().isEmpty()) {
+        if (clinicForm.getFile() != null && !clinicForm.getFile().isEmpty()) {
             List<String> upLoadImageurls = cloudinaryService.uploadClinicRoomImage(clinicForm.getFile());
             createClinic.setImages(upLoadImageurls);
         }
@@ -127,8 +122,8 @@ public class ClinicImpl implements IClinicService {
 
     @Override
     public ResponseData<ClinicDTO> updateClinic(UUID clinicId, ClinicForm clinicForm) {
-        Clinic existingClinic =clinicRepository.findById(clinicId)
-                .orElseThrow(()-> new RuntimeException("Clinic not found"));
+        Clinic existingClinic = clinicRepository.findById(clinicId)
+                .orElseThrow(() -> new RuntimeException("Clinic not found"));
 
         List<String> oldImages = existingClinic.getImages() != null ? existingClinic.getImages() : new ArrayList<>();
         List<String> keptImages = clinicForm.getImage() != null ? clinicForm.getImage() : new ArrayList<>();
@@ -140,13 +135,13 @@ public class ClinicImpl implements IClinicService {
 
         deletedImages.forEach(cloudinaryService::deleteImage);
         List<String> newImageUrls = new ArrayList<>(keptImages);
-        if(clinicForm.getFile() != null && !clinicForm.getFile().isEmpty()) {
+        if (clinicForm.getFile() != null && !clinicForm.getFile().isEmpty()) {
             List<String> upLoadImageUrls = cloudinaryService.uploadClinicRoomImage(clinicForm.getFile());
             newImageUrls.addAll(upLoadImageUrls);
         }
 
         existingClinic.setImages(newImageUrls);
-        ClinicMapper.updateClinicForm(existingClinic,clinicForm);
+        ClinicMapper.updateClinicForm(existingClinic, clinicForm);
 
         // Update owner if ownerId is provided
         if (clinicForm.getOwnerId() != null) {
@@ -162,7 +157,7 @@ public class ClinicImpl implements IClinicService {
 
     @Override
     public ResponseData<ClinicDTO> getClinicById(UUID clinicId) {
-        Clinic clinic = clinicRepository.findById(clinicId).orElseThrow(()-> new RuntimeException("clinic not found"));
+        Clinic clinic = clinicRepository.findById(clinicId).orElseThrow(() -> new RuntimeException("clinic not found"));
         ClinicDTO clinicDto = ClinicMapper.toDto(clinic);
         return new ResponseData<>(200, "clinic get successfully", clinicDto);
     }
@@ -221,5 +216,29 @@ public class ClinicImpl implements IClinicService {
 
         return new ResponseData<>(200, "Clinics retrieved successfully", clinicDTOPage);
     }
+
+    @Override
+    public ResponseData<ClinicOwnerDTO> getClinicOwnerByClinicId(UUID clinicId) {
+        Clinic clinic = clinicRepository.findById(clinicId).orElseThrow(() -> new RuntimeException("clinic not found"));
+        ClinicOwner clinicOwner = clinicOwnerRepository.findById(clinic.getOwner().getOwnerId()).orElseThrow(() -> new RuntimeException("clinicOwner not found"));
+        ClinicOwnerDTO data = ClinicMapper.toClinicOwnerDTO(clinicOwner);
+
+        return new ResponseData<>(200, "ClinicOwner retrieved successfully", data);
+    }
+
+    @Override
+    public ResponseData<Page<ClinicOwnerDTO>> getAllClinicOwner(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<ClinicOwner> ownerPage = clinicOwnerRepository.findAll(pageable);
+
+        Page<ClinicOwnerDTO> dto = ownerPage.map(ClinicMapper::toClinicOwnerDTO);
+
+        return  new ResponseData<>(200, "Clinics retrieved successfully", dto);
+
+    }
+
 
 }

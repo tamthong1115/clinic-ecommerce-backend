@@ -42,6 +42,12 @@ public class ClinicController {
         this.doctorService = doctorService;
     }
 
+    @Operation(summary = "Create new clinic for owner")
+    @PostMapping("/create-clinic")
+    public ResponseEntity<ResponseData<ClinicDTO>> CreateClinic(@RequestBody ClinicForm clinicForm) {
+        ResponseData<ClinicDTO> response = iClinicService1.createNewClinic(clinicForm);
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping("/{clinic_id}/create-doctor")
     public ResponseEntity<DoctorDetailResponse> createDoctorWithClinicId(
