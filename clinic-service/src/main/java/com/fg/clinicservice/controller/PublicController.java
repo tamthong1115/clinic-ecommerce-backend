@@ -75,11 +75,16 @@ public class PublicController {
         return ResponseEntity.ok(responseData);
     }
 
-    @Operation(summary = "Get all clinic")
+    @Operation(summary = "Get all clinics with pagination")
     @GetMapping("/get-all-clinic")
-    ResponseEntity<ResponseData<List<ClinicDTO>>> getAllClinics() {
-        ResponseData<List<ClinicDTO>> responseData = iClinicService.getAllClinics();
-        return ResponseEntity.ok(responseData);
+    public ResponseEntity<ResponseData<Page<ClinicDTO>>> getAllClinics(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "clinicName") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        ResponseData<Page<ClinicDTO>> response = iClinicService.getAllClinics(page, size, sortBy, direction);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get clinic by id")

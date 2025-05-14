@@ -2,6 +2,7 @@ package com.fg.clinicservice.controller;
 
 import com.fg.clinicservice.client.user.UserDTO;
 import com.fg.clinicservice.doctor.dto.DoctorDetailResponse;
+import com.fg.clinicservice.doctor.dto.DoctorIdResponse;
 import com.fg.clinicservice.doctor.dto.DoctorRequest;
 import com.fg.clinicservice.doctor.service.DoctorService;
 import com.fg.clinicservice.schedule.dto.DoctorScheduleDTO;
@@ -30,16 +31,22 @@ public class DoctorController {
         return ResponseEntity.ok(doctorService.updateDoctor(id, doctorRequest));
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<UserDTO> getCurrentUser() {
-        return ResponseEntity.ok(doctorService.getCurrentUser());
+    @GetMapping("/get-schedules")
+    public ResponseEntity<List<DoctorScheduleDTO>> getDoctorSchedules() {
+        return ResponseEntity.ok(scheduleService.getDoctorSchedules());
     }
 
-    @PostMapping("/{doctorId}/schedules")
+    @GetMapping("/by-user/{userId}")
+    public ResponseEntity<DoctorIdResponse> getDoctorIdByUserId(@PathVariable UUID userId) {
+        UUID doctorId = doctorService.getDoctorIdByUserId(userId);
+        return ResponseEntity.ok(new DoctorIdResponse(doctorId));
+    }
+
+    @PostMapping("/{userId}/create-schedule")
     public ResponseEntity<DoctorScheduleDTO> createSchedule(
-            @PathVariable UUID doctorId,
+            @PathVariable UUID userId,
             @Valid @RequestBody DoctorScheduleRequest request) {
-        return ResponseEntity.ok(scheduleService.createSchedule( doctorId, request));
+        return ResponseEntity.ok(scheduleService.createScheduleByUserId(userId, request));
     }
 
     @PutMapping("/{doctorId}/schedules/{scheduleId}")
@@ -54,11 +61,6 @@ public class DoctorController {
     public ResponseEntity<Void> deleteSchedule(@PathVariable UUID scheduleId) {
         scheduleService.deleteSchedule(scheduleId);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{doctorId}/schedules")
-    public ResponseEntity<List<DoctorScheduleDTO>> getClinicSchedules(@PathVariable UUID clinicID) {
-        return ResponseEntity.ok(scheduleService.getClinicSchedules(clinicID));
     }
 
     @GetMapping("/{doctorId}/schedules/{scheduleId}")

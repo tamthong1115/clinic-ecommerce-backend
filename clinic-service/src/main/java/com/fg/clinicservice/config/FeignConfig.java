@@ -18,6 +18,10 @@ public class FeignConfig {
                 if (authorizationHeader != null) {
                     requestTemplate.header("Authorization", authorizationHeader);
                 }
+                String userRolesHeader = attributes.getRequest().getHeader("X-User-Roles");
+                if (userRolesHeader != null) {
+                    requestTemplate.header("X-User-Roles", userRolesHeader);
+                }
             }
         };
     }

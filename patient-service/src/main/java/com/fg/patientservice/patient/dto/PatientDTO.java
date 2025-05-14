@@ -1,4 +1,4 @@
-package com.fg.clinicservice.doctor.dto;
+package com.fg.patientservice.patient.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,21 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class CreateDoctorRequest {
+@AllArgsConstructor
+public class PatientDTO {
+    private UUID patientId;
+    private UUID userId;
     private String firstName;
     private String lastName;
     private String email;
-    private String phoneNumber;
     private LocalDate dateOfBirth;
+    private String phone;
     private String address;
-    private String city;
-    private String state;
-    private String postalCode;
-    private String profileImageUrl;
-    private String licenseNumber;
 }

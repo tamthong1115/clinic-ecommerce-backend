@@ -12,6 +12,10 @@ import com.fg.clinicservice.response.ResponseError;
 import com.fg.clinicservice.util.CloudinaryService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,12 +107,32 @@ public class ClinicImpl implements IClinicService {
     }
 
     @Override
+    public ResponseData<Page<ClinicDTO>> getAllClinics(int page, int size, String sortBy, String direction) {
+        // Create Sort object based on direction
+        Sort sort = direction.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        // Create Pageable object
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Get page of clinics from repository
+        Page<Clinic> clinicPage = clinicRepository.findAll(pageable);
+
+        // Map entities to DTOs
+        Page<ClinicDTO> clinicDTOPage = clinicPage.map(ClinicMapper::toDto);
+
+        return new ResponseData<>(200, "Clinics retrieved successfully", clinicDTOPage);
+    }
+
+    @Override
     public ResponseData<ClinicDTO> updateClinic(UUID clinicId, ClinicForm clinicForm) {
         Clinic existingClinic =clinicRepository.findById(clinicId)
                 .orElseThrow(()-> new RuntimeException("Clinic not found"));
 
-        List<String> oldImages = existingClinic.getImages();
-        List<String> keptImages = clinicForm.getImage();
+        List<String> oldImages = existingClinic.getImages() != null ? existingClinic.getImages() : new ArrayList<>();
+        List<String> keptImages = clinicForm.getImage() != null ? clinicForm.getImage() : new ArrayList<>();
+
 
         List<String> deletedImages = oldImages.stream()
                 .filter(img -> !keptImages.contains(img))
@@ -163,14 +187,6 @@ public class ClinicImpl implements IClinicService {
     }
 
     @Override
-    public ResponseData<List<ClinicDTO>> getAllClinics() {
-        List<ClinicDTO> listClinic = clinicRepository.findAll().stream()
-                .map(ClinicMapper::toDto)
-                .collect(Collectors.toList());
-        return new ResponseData<>(200, "clinic get successfully", listClinic);
-    }
-
-    @Override
     public ResponseData<List<ClinicDTO>> getClinicsByOwnerId() {
         ResponseEntity<UserDTO> currentUser = authClient.getCurrentUser();
         ClinicOwner clinicOwner = clinicOwnerRepository.findByUserId(currentUser.getBody().getUserId());
@@ -180,5 +196,30 @@ public class ClinicImpl implements IClinicService {
         return new ResponseData<>(200, "clinic get successfully", listClinic);
     }
 
+
+    @Override
+    public ResponseData<Page<ClinicDTO>> getClinicsByOwnerIdWithPagination(int page, int size, String sortBy, String direction) {
+        ResponseEntity<UserDTO> currentUser = authClient.getCurrentUser();
+        ClinicOwner clinicOwner = clinicOwnerRepository.findByUserId(currentUser.getBody().getUserId());
+
+        // Create Sort object based on direction
+        Sort sort = direction.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        // Create Pageable object
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Get page of clinics from repository
+        Page<Clinic> clinicPage = clinicRepository.findByOwner_OwnerId(clinicOwner.getOwnerId(), pageable);
+
+        // Map entities to DTOs
+        Page<ClinicDTO> clinicDTOPage = clinicPage.map(clinic -> {
+            // Use your existing mapper or create a DTO manually
+            return ClinicMapper.toDto(clinic);
+        });
+
+        return new ResponseData<>(200, "Clinics retrieved successfully", clinicDTOPage);
+    }
 
 }

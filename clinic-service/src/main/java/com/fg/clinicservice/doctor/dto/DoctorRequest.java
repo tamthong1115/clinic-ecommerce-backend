@@ -1,7 +1,9 @@
 package com.fg.clinicservice.doctor.dto;
 
+import com.fg.clinicservice.doctor.model.Doctor;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class DoctorRequest {
@@ -22,7 +24,7 @@ public class DoctorRequest {
     @NotBlank(message = "Gender is required")
     private String gender;
 
-    private String profilePicture;
+    private MultipartFile profilePicture;
 
     @NotNull(message = "Experience years is required")
     @PositiveOrZero(message = "Experience years must be positive or zero")
@@ -30,4 +32,6 @@ public class DoctorRequest {
 
     @NotBlank(message = "Education is required")
     private String education;
+
+    private Doctor.DoctorStatus status;
 } 

@@ -1,13 +1,15 @@
-package com.fg.patientservice.patient.model;
+package com.fg.appointment.model;
 
 import jakarta.persistence.*;
+
+import java.util.UUID;
 
 @Entity(name = "medical_record")
 public class MedicalRecords {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", unique = true, nullable = false)
-    private String medicalRecordId;
+    private UUID medicalRecordId;
 
     @Column(name = "patient_id", nullable = false)
     private String patientId;
@@ -32,4 +34,7 @@ public class MedicalRecords {
 
     @Column(name = "updated_at", nullable = false)
     private String updatedAt;
+
+    @OneToOne(mappedBy = "medicalRecord")
+    private Appointment appointment;
 }

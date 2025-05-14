@@ -49,5 +49,22 @@ spring:
             - JwtValidation
 
 
+        - id: patient-service
+          uri: lb://patient-service
+          predicates:
+            - Path=/patient/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+
+
+        - id: appointment-service
+          uri: lb://appointment-service
+          predicates:
+            - Path=/appointment/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+
 server:
   port: 8765

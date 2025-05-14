@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +19,7 @@ public class DoctorSearchResponse {
     private Integer experienceYears;
     private String education;
 
-    // Service information
-    private Set<ServiceInfo> services;
+//    private List<ServiceInfo> services;
 
     // Schedule information
     private List<ScheduleInfo> schedules;
@@ -27,19 +27,21 @@ public class DoctorSearchResponse {
     // Clinic information
     private ClinicInfo clinic;
 
-    @Data
-    public static class ServiceInfo {
-        private UUID id;
-        private String name;
-        private BigDecimal price;
-    }
+//    @Data
+//    public static class ServiceInfo {
+//        private UUID id;
+//        private String name;
+//        private BigDecimal price;
+//        private String description;
+//    }
 
     @Data
     public static class ScheduleInfo {
         private UUID id;
-        private DayOfWeek dayOfWeek;
+        private LocalDate date;
         private LocalTime startTime;
         private LocalTime endTime;
+        private boolean booked; // true if booked, false if available
     }
 
     @Data

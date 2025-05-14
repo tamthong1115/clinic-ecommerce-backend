@@ -15,6 +15,9 @@ public interface DoctorService {
     DoctorDetailResponse updateDoctor(UUID id, DoctorRequest doctorRequest);
     void deleteDoctor(UUID id);
     UserDTO getCurrentUser();
+    UUID getDoctorIdByUserId(UUID userId);
     Page<DoctorSearchResponse> searchDoctors(DoctorSearchCriteria criteria);
-
+    Page<DoctorBasicResponse> getAllDoctorsBasic(int page, int size, String sortBy, String direction);
+    Page<DoctorBasicResponse> getDoctorsByClinicBasic(UUID clinicId, int page, int size, String sortBy, String direction);
+    Page<DoctorBasicResponse> searchDoctorsBasic(DoctorSearchCriteria criteria);
 }

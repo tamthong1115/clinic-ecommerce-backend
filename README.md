@@ -14,15 +14,14 @@ The system consists of the following microservices:
 - **Eureka Server** (Port: 8761): Service discovery and registration
 - **Config Server** (Port: 8888): Centralized configuration management
 - **Auth Service** (Port: 9000): Authentication and authorization
-- **Doctor Service** (Port: 8050): Doctor-related operations
-- **Patient Service**: Patient-related operations
+- **Patient Service** (Port: 8050) : Patient-related operations
 - **PostgreSQL Database**: Data persistence
 - **Zipkin** (Port: 9411): Distributed tracing
 
 ## Prerequisites
 
 - Docker and Docker Compose
-- Java 17 or higher
+- Java 17
 - Maven
 - PostgreSQL client (optional)
 
@@ -63,8 +62,6 @@ JWT_SECRET=your_jwt_secret
 ### Auth Service
 - Authentication endpoints available at: http://localhost:9000
 
-### Doctor Service
-- Doctor-related endpoints available at: http://localhost:8050
 
 ### Patient Service
 - Patient-related endpoints available at: [patient-service-port]

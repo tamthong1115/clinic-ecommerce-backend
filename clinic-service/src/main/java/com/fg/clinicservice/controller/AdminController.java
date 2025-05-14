@@ -17,6 +17,7 @@ import com.fg.clinicservice.speciality.model.SpecialityDto;
 import com.fg.clinicservice.speciality.model.SpecialityForm;
 import com.fg.clinicservice.speciality.service.ISpecialityService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +55,8 @@ public class AdminController {
         ResponseData<ClinicDTO> response = iClinicService.createNewClinic(clinicForm);
         return ResponseEntity.ok(response);
     }
+
+
 
     @Operation(summary = "Add new special requirement for service")
     @PostMapping("/sr/add-new")

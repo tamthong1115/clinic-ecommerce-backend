@@ -66,6 +66,17 @@ public class CloudinaryService {
     }
 
     /**
+     * Uploads a profile picture for a doctor to Cloudinary.
+     *
+     * @param file The multipart file to upload
+     * @return The secure URL of the uploaded image
+     * @throws RuntimeException if the upload fails
+     */
+    public String uploadDoctorProfilePicture(MultipartFile file) {
+        return uploadImage(file, "doctor-profiles");
+    }
+
+    /**
      * Uploads an image to a specific folder in Cloudinary.
      *
      * @param file       The multipart file to upload
