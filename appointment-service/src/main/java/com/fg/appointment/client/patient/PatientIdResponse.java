@@ -1,4 +1,4 @@
-package com.fg.appointment.client.clinic;
+package com.fg.appointment.client.patient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

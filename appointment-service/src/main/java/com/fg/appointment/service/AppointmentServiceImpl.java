@@ -2,7 +2,8 @@ package com.fg.appointment.service;
 
 import com.fg.appointment.client.clinic.ClinicClient;
 import com.fg.appointment.client.clinic.DoctorIdResponse;
-import com.fg.appointment.client.clinic.PatientIdResponse;
+import com.fg.appointment.client.patient.PatientClient;
+import com.fg.appointment.client.patient.PatientIdResponse;
 import com.fg.appointment.dto.AppointmentDTO;
 import com.fg.appointment.dto.AppointmentCreateDTO;
 import com.fg.appointment.dto.TimeSlotDTO;
@@ -24,6 +25,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
     private final ClinicClient clinicClient;
+    private final PatientClient patientClient;
     private final AppointmentMapper appointmentMapper;
 
     @Override
@@ -103,8 +105,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     public List<AppointmentDTO> getAppointmentsByPatientId(UUID userId) {
         // Get patientId from userId using the client
-        PatientIdResponse response = clinicClient.getPatientIdByUserId(userId);
-
+        PatientIdResponse response = patientClient.getPatientIdByUserId(userId);
+        // Check if the patient exists
         if (response == null || response.getPatientId() == null) {
             throw new ResourceNotFoundException("Patient not found for userId: " + userId);
         }
