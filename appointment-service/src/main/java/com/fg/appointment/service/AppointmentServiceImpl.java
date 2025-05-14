@@ -2,11 +2,13 @@ package com.fg.appointment.service;
 
 import com.fg.appointment.client.clinic.ClinicClient;
 import com.fg.appointment.client.clinic.DoctorIdResponse;
+import com.fg.appointment.client.clinic.PatientIdResponse;
 import com.fg.appointment.dto.AppointmentDTO;
 import com.fg.appointment.dto.AppointmentCreateDTO;
 import com.fg.appointment.dto.TimeSlotDTO;
 import com.fg.appointment.exception.OperationFailedException;
 import com.fg.appointment.exception.ResourceNotFoundException;
+import com.fg.appointment.mapper.AppointmentMapper;
 import com.fg.appointment.model.Appointment;
 import com.fg.appointment.repository.AppointmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,22 +24,34 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
     private final ClinicClient clinicClient;
+    private final AppointmentMapper appointmentMapper;
 
     @Override
     public AppointmentDTO createAppointment(AppointmentCreateDTO dto) {
         try {
-            Appointment appointment = new Appointment();
-            appointment.setDoctorId(dto.getDoctorId());
-            appointment.setPatientId(dto.getPatientId());
-            appointment.setClinicId(dto.getClinicId());
-            appointment.setAppointmentDate(dto.getAppointmentDate());
-            appointment.setStartTime(dto.getStartTime());
-            appointment.setEndTime(dto.getEndTime());
-            appointment.setStatus(dto.getStatus());
+            // Validate required fields
+            if (dto.getDoctorId() == null || dto.getPatientId() == null ||
+                    dto.getClinicId() == null || dto.getServiceId() == null) {
+                throw new IllegalArgumentException("Doctor, patient, clinic, and service IDs are required");
+            }
 
+            // Create appointment with mapper
+            Appointment appointment = appointmentMapper.toEntity(dto);
 
+            // Check for scheduling conflicts
+            boolean hasConflict = appointmentRepository.findByDoctorIdAndAppointmentDate(
+                            dto.getDoctorId(), dto.getAppointmentDate()).stream()
+                    .anyMatch(existing ->
+                            (dto.getStartTime().isBefore(existing.getEndTime()) &&
+                                    dto.getEndTime().isAfter(existing.getStartTime())));
+
+            if (hasConflict) {
+                throw new OperationFailedException("Time slot is already booked");
+            }
+
+            // Save and return
             appointment = appointmentRepository.save(appointment);
-            return toDTO(appointment);
+            return appointmentMapper.toDTO(appointment);
         } catch (Exception e) {
             throw new OperationFailedException("Failed to create appointment: " + e.getMessage());
         }
@@ -45,7 +59,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Optional<AppointmentDTO> getAppointmentById(UUID id) {
-        return appointmentRepository.findById(id).map(this::toDTO);
+        return appointmentRepository.findById(id).map(appointmentMapper::toDTO);
     }
 
     @Override
@@ -53,15 +67,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
         try {
-            appointment.setDoctorId(dto.getDoctorId());
-            appointment.setPatientId(dto.getPatientId());
-            appointment.setClinicId(dto.getClinicId());
-            appointment.setAppointmentDate(dto.getAppointmentDate());
-            appointment.setStartTime(dto.getStartTime());
-            appointment.setEndTime(dto.getEndTime());
-            appointment.setStatus(dto.getStatus());
+            appointmentMapper.updateEntityFromDTO(dto, appointment);
             appointment = appointmentRepository.save(appointment);
-            return toDTO(appointment);
+            return appointmentMapper.toDTO(appointment);
         } catch (Exception e) {
             throw new OperationFailedException("Failed to update appointment: " + e.getMessage());
         }
@@ -79,7 +87,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
-
     public List<TimeSlotDTO> getBookedTimeSlots(UUID doctorId, LocalDate date) {
         List<Appointment> appointments = appointmentRepository.findByDoctorIdAndAppointmentDate(doctorId, date);
         try {
@@ -95,18 +102,20 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     public List<AppointmentDTO> getAppointmentsByPatientId(UUID userId) {
-
         // Get patientId from userId using the client
-        DoctorIdResponse response = clinicClient.getPatientIdByUserId(userId);
+        PatientIdResponse response = clinicClient.getPatientIdByUserId(userId);
+
+        if (response == null || response.getPatientId() == null) {
+            throw new ResourceNotFoundException("Patient not found for userId: " + userId);
+        }
+
+        UUID patientId = response.getPatientId();
 
         List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
-        return appointments.stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+        return appointmentMapper.toDTOList(appointments);
     }
 
     public Map<LocalDate, List<AppointmentDTO>> getDoctorCalendarAppointments(UUID userId, LocalDate referenceDate) {
-
         // Get doctorId from userId using the client
         DoctorIdResponse response = clinicClient.getDoctorIdByUserId(userId);
 
@@ -140,24 +149,9 @@ public class AppointmentServiceImpl implements AppointmentService {
             if (!calendarData.containsKey(appointmentDate)) {
                 calendarData.put(appointmentDate, new ArrayList<>());
             }
-            calendarData.get(appointmentDate).add(toDTO(appointment));
+            calendarData.get(appointmentDate).add(appointmentMapper.toDTO(appointment));
         });
 
         return calendarData;
     }
-
-    private AppointmentDTO toDTO(Appointment appointment) {
-        AppointmentDTO dto = new AppointmentDTO();
-        dto.setAppointmentId(appointment.getAppointmentId());
-        dto.setDoctorId(appointment.getDoctorId());
-        dto.setPatientId(appointment.getPatientId());
-        dto.setClinicId(appointment.getClinicId());
-        dto.setAppointmentDate(appointment.getAppointmentDate());
-        dto.setStartTime(appointment.getStartTime());
-        dto.setEndTime(appointment.getEndTime());
-        dto.setStatus(appointment.getStatus());
-        return dto;
-    }
-
-
 }

@@ -12,8 +12,8 @@ public interface ClinicClient {
     @GetMapping("/api/v1/doctor/by-user/{userId}")
     DoctorIdResponse getDoctorIdByUserId(@PathVariable UUID userId);
 
-    // You can add a convenience method to directly get the ID
-    default UUID fetchDoctorIdByUserId(UUID userId) {
-        return getDoctorIdByUserId(userId).getDoctorId();
-    }
+
+    @GetMapping("/api/v1/patient/by-user/{userId}")
+    PatientIdResponse getPatientIdByUserId(@PathVariable UUID userId);
+
 }
