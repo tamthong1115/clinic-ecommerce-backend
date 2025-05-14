@@ -1,8 +1,7 @@
-package com.fg.authservice.handler;
+package com.fg.patientservice.handler;
 
-import com.fg.authservice.exception.UserAlreadyExistsException;
-import com.fg.authservice.exception.InvalidCredentialsException;
-import com.fg.authservice.exception.UserNotFoundException;
+
+import com.fg.patientservice.exception.PatientNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -28,27 +27,14 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorMessageDTO> handleUserNotFoundException(UserNotFoundException e) {
+    @ExceptionHandler(PatientNotFoundException.class)
+    public ResponseEntity<ErrorMessageDTO> handlePatientNotFoundException(PatientNotFoundException ex) {
+        Map<String, String> details = new HashMap<>();
+        details.put("patientId", ex.getMessage());
+
         return new ResponseEntity<>(
-                buildErrorResponse(e.getMessage(), ErrorCode.USER_NOT_FOUND.name(), null),
+                buildErrorResponse("Patient not found", ErrorCode.PATIENT_NOT_FOUND.name(), details),
                 HttpStatus.NOT_FOUND
-        );
-    }
-
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorMessageDTO> handleUserAlreadyExistsException(UserAlreadyExistsException e) {
-        return new ResponseEntity<>(
-                buildErrorResponse(e.getMessage(), ErrorCode.USER_ALREADY_EXISTS.name(), null),
-                HttpStatus.CONFLICT
-        );
-    }
-
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorMessageDTO> handleInvalidCredentialsException(InvalidCredentialsException e) {
-        return new ResponseEntity<>(
-                buildErrorResponse(e.getMessage(), ErrorCode.INVALID_CREDENTIALS.name(), null),
-                HttpStatus.UNAUTHORIZED
         );
     }
 

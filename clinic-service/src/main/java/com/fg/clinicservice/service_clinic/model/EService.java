@@ -1,6 +1,7 @@
 package com.fg.clinicservice.service_clinic.model;
 
 import com.fg.clinicservice.clinic_service.model.ClinicService;
+import com.fg.clinicservice.doctor.model.Doctor;
 import com.fg.clinicservice.speciality.model.Speciality;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -55,5 +56,9 @@ public class EService {
     @Builder.Default
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ClinicService> clinicServices = new HashSet<>();
+
+    @Builder.Default
+    @ManyToMany(mappedBy = "services")
+    private Set<Doctor> doctors = new HashSet<>();
 
 }

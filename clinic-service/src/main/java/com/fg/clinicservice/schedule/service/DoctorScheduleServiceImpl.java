@@ -1,5 +1,7 @@
 package com.fg.clinicservice.schedule.service;
 
+import com.fg.clinicservice.client.appointment.AppointmentClient;
+import com.fg.clinicservice.client.appointment.TimeSlotDTO;
 import com.fg.clinicservice.client.user.AuthClient;
 import com.fg.clinicservice.client.user.UserDTO;
 import com.fg.clinicservice.schedule.dto.DoctorScheduleDTO;
@@ -30,12 +32,13 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
     private final DoctorRepository doctorRepository;
     private final DoctorMapper doctorMapper;
     private final AuthClient authClient;
+    private final AppointmentClient appointmentClient;
 
     @Override
     @Transactional
-    public DoctorScheduleDTO createSchedule( UUID doctorId, DoctorScheduleRequest request) {
-        Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + doctorId));
+    public DoctorScheduleDTO createScheduleByUserId(UUID userId, DoctorScheduleRequest request) {
+        Doctor doctor = doctorRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found for user ID: " + userId));
 
         DoctorSchedule schedule = new DoctorSchedule();
         schedule.setDoctor(doctor);
@@ -144,10 +147,10 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
     }
 
     private List<TimeSlot> getBookedTimeSlots(UUID doctorId, LocalDate date) {
-        // This should call appointmentRepository to get booked appointments
-        // and convert them to TimeSlot objects
-        // Implementation depends on how you access the appointment-service
-        return List.of(); // Placeholder
+        List<TimeSlotDTO> booked = appointmentClient.getBookedTimeSlots(doctorId, date);
+        return booked.stream()
+                .map(dto -> new TimeSlot(dto.getStartTime(), dto.getEndTime()))
+                .collect(Collectors.toList());
     }
 
     public boolean isValidTimeSlot(UUID doctorId, LocalDate date, LocalTime startTime, LocalTime endTime) {

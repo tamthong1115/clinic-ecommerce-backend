@@ -1,5 +1,7 @@
 package com.fg.authservice.auth;
 
+import com.fg.authservice.client.patient.PatientClient;
+import com.fg.authservice.client.patient.PatientCreateDTO;
 import com.fg.authservice.dto.*;
 import com.fg.authservice.exception.InvalidCredentialsException;
 import com.fg.authservice.exception.UserAlreadyExistsException;
@@ -35,6 +37,7 @@ public class AuthService {
   private final AuthenticationManager authenticationManager;
   private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
+  private final PatientClient patientClient;
 
   private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
@@ -77,7 +80,24 @@ public class AuthService {
 
     User newUser = userMapper.toUser(registerRequestDTO);
     newUser.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
-    return userService.save(newUser);
+
+
+    User savedUser = userService.save(newUser);
+
+    // Create patient after user registration
+    try {
+      PatientCreateDTO patientCreateDTO = PatientCreateDTO.builder()
+              .userId(savedUser.getUserId())
+              .email(savedUser.getEmail())
+              .build();
+
+      patientClient.createPatient(patientCreateDTO);
+      logger.info("Patient created successfully for user with ID: {}", savedUser.getUserId());
+    } catch (Exception e) {
+      logger.error("Failed to create patient for user with ID: {}", savedUser.getUserId(), e);
+    }
+
+    return savedUser;
   }
 
   public boolean emailExists(String email) {

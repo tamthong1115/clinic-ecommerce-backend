@@ -14,7 +14,7 @@ public class UserMapper {
 
         return User.builder()
                 .email(registerRequestDTO.getEmail())
-                .role(Role.USER)
+                .role(Role.PATIENT)
                 .emailVerified(false)
                 .build();
     }

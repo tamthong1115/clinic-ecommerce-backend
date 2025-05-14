@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS "doctor" (
     experience_years INT,
     license_number VARCHAR(100),
     education TEXT,
+    status VARCHAR(20),
     clinic_id UUID,
     CONSTRAINT fk_clinic FOREIGN KEY (clinic_id) REFERENCES clinic(id)
 );
@@ -394,6 +395,7 @@ INSERT INTO "doctor" (
     experience_years,
     license_number,
     education,
+    status,
     clinic_id
 ) VALUES
       ('a1b2c3d4-e5f6-7890-abcd-ef1234567890',
@@ -403,25 +405,41 @@ INSERT INTO "doctor" (
        'doctor@gmail.com',
        '+1234567890',
        'Male',
-       'https://example.com/profile1.jpg',
+       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4IJtnDL22_yu-R6A4wxvCOfofHIihezQK-Q&s',
        10,
        'LIC123456',
        'MD, Cardiology, Harvard Medical School',
+       'ACTIVE',
        'a774500c-6dd1-4378-a5f9-ac91458a9b6f'),
 
       ('b2c3d4e5-f678-90ab-cdef-234567890abc',
-       'c9ab5852-50f6-4989-b71a-2b7986fc70fa',
+       'ce97d623-dde7-437e-aa71-5535e491ba33',
        'Jane',
        'Smith',
-       'user@gmail.com',
+       'doctor1@gmail.com',
        '+1987654321',
        'Female',
-       'https://example.com/profile2.jpg',
+       'https://img.freepik.com/free-psd/cute-3d-cartoon-female-doctor-wearing-glasses-white-coat-with-stethoscope-healthcare-professional-illustration_632498-32034.jpg',
        7,
        'LIC654321',
        'MD, Dermatology, Stanford University',
-       'c51b8083-58a3-4db1-98b7-326c9e3e7571')
+       'ACTIVE',
+       'c51b8083-58a3-4db1-98b7-326c9e3e7571'),
+      ('2d1a60e1-fb44-4b93-86c3-1c5ef7c379a1', '94a75cbe-1a45-4666-b9a7-22bc6d12856f', 'Minh', 'Nguyễn', 'minh.nguyen@clinic.com', '0901122334', 'Male',
+       'https://example.com/doctor/minh.png', 10, 'DOC-001', 'Đại học Y Dược TP.HCM', 'ACTIVE', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f'),
+
+      ('3c83ab8b-28d6-4b6b-a8a4-d6d2421f1b88', '35c1b961-383b-4c0f-a4bc-9be7b15a743b', 'Lan', 'Trần', 'lan.tran@clinic.com', '0912345678', 'Female',
+       'https://example.com/doctor/lan.png', 8, 'DOC-002', 'Đại học Y Hà Nội', 'ACTIVE', 'c51b8083-58a3-4db1-98b7-326c9e3e7571'),
+
+      ('5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', '73a69a3c-ff94-4458-8c26-0b2c4ff0b163', 'Tùng', 'Phạm', 'tung.pham@clinic.com', '0923456789', 'Male',
+       'https://example.com/doctor/tung.png', 12, 'DOC-003', 'Đại học Y Dược TP.HCM', 'ACTIVE', 'c51b8083-58a3-4db1-98b7-326c9e3e7571'),
+
+      ('9a654af0-49e1-4a2d-b12d-e5b87f95cd93', 'aa463bf6-1669-409f-b6d1-d92ea6ff1a8a', 'Hương', 'Lê', 'huong.le@clinic.com', '0934567890', 'Female',
+       'https://example.com/doctor/huong.png', 5, 'DOC-004', 'Đại học Y Cần Thơ', 'ACTIVE', '7eb0a7de-9658-4dbf-a42f-1804f2b5d734')
 ON CONFLICT (id) DO NOTHING;
+
+
+
 
 -- Doctor-Specialty many-to-many relationship
 INSERT INTO doctor_speciality (doctor_id, speciality_id) VALUES
@@ -465,5 +483,82 @@ INSERT INTO doctor_schedule (
     -- Doctor Jane Smith's schedule
     ('484fe408-88c6-4a36-a323-b2cf0c8f1d01', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'TUESDAY', '09:00:00', '12:00:00', 45, 15, TRUE),
     ('8d78385e-1b9e-484f-8fe2-0e63d170650f', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'THURSDAY', '14:00:00', '18:00:00', 45, 15, TRUE),
-    ('3aab909e-67c0-4fa7-93ac-537f4b22efba', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'SATURDAY', '10:00:00', '14:00:00', 45, 15, TRUE)
+    ('3aab909e-67c0-4fa7-93ac-537f4b22efba', 'b2c3d4e5-f678-90ab-cdef-234567890abc', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'SATURDAY', '10:00:00', '14:00:00', 45, 15, TRUE),
+
+-- Doctor Tùng Phạm's schedule (6 days, 9 slots)
+-- Monday
+('b7a3d317-04a0-40a0-bfae-4a1d24d6e441', '5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'MONDAY', '08:00:00', '12:00:00', 30,5, TRUE),
+('cc8d2c6d-8391-4f86-91c2-d0c8c34c258e', '5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'MONDAY', '13:00:00', '17:00:00', 30, 5,TRUE),
+-- Tuesday
+('52417132-cb01-46e2-a617-6d438d287e14', '5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'TUESDAY', '08:00:00', '12:00:00', 30, 5,TRUE),
+-- Wednesday
+('38b19310-4448-4de4-aef5-558a3b1e7502', '5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'WEDNESDAY', '13:00:00', '17:00:00', 30, 5,TRUE),
+-- Thursday
+('ebf0988a-4f74-4ef4-89f5-9bbf8f456bf9', '5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'THURSDAY', '08:00:00', '12:00:00', 30, 5,TRUE),
+-- Friday
+('30d7d5fd-3217-4706-a9b6-305e2928bb3d', '5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'FRIDAY', '13:00:00', '17:00:00', 30, 5,TRUE),
+-- Saturday
+('fd9a9c70-010e-4d67-a994-392f20bd889e', '5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'SATURDAY', '08:00:00', '12:00:00', 30, 5,TRUE),
+('d56f4e3f-d09c-4a9b-a650-9016e0e5e81c', '5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'SATURDAY', '13:00:00', '17:00:00', 30, 5,TRUE),
+-- Sunday
+('e6223c9f-8c56-4cc0-aad1-999f9a0d77e2', '5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'SUNDAY', '09:00:00', '11:00:00', 30, 5,TRUE),
+-- Doctor Hương Lê's schedule (3 days)
+
+    ('ee775cb4-9a18-4986-91c3-7352a33cf06a', '9a654af0-49e1-4a2d-b12d-e5b87f95cd93', '7eb0a7de-9658-4dbf-a42f-1804f2b5d734', 'MONDAY', '08:00:00', '11:00:00', 15, 10,TRUE),
+    ('a3a17177-2c5b-4628-b99a-c319143cb4c7', '9a654af0-49e1-4a2d-b12d-e5b87f95cd93', '7eb0a7de-9658-4dbf-a42f-1804f2b5d734', 'WEDNESDAY', '13:00:00', '16:00:00', 15, 10,TRUE),
+    ('1f9c8f2e-2904-441b-bdf2-7d648a58fcb9', '9a654af0-49e1-4a2d-b12d-e5b87f95cd93', '7eb0a7de-9658-4dbf-a42f-1804f2b5d734', 'FRIDAY', '09:00:00', '12:00:00', 15, 10,TRUE),
+-- Doctor Minh Nguyễn's schedule (4 days)
+    ('a6b5ff20-927c-4e5c-a7ff-bd6b3b0666c0', '2d1a60e1-fb44-4b93-86c3-1c5ef7c379a1', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'TUESDAY', '08:00:00', '12:00:00', 20, 15,TRUE),
+    ('7c3d6c48-cbaa-4b13-a176-9c6fd26b7f91', '2d1a60e1-fb44-4b93-86c3-1c5ef7c379a1', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'THURSDAY', '13:00:00', '17:00:00', 20, 15,TRUE),
+    ('7df2c2ed-7a49-48e8-8f45-e09f7b7fc90f', '2d1a60e1-fb44-4b93-86c3-1c5ef7c379a1', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'SATURDAY', '09:00:00', '13:00:00', 20, 15,TRUE),
+    ('f25d4a1e-b7f0-43e4-a97b-fd6377b40813', '2d1a60e1-fb44-4b93-86c3-1c5ef7c379a1', 'a774500c-6dd1-4378-a5f9-ac91458a9b6f', 'SUNDAY', '10:00:00', '12:00:00', 20, 15,TRUE),
+-- Doctor Lan Trần's schedule (2 days)
+    ('3dd7b01c-1c7c-4bc7-bdd2-1c674376db12', '3c83ab8b-28d6-4b6b-a8a4-d6d2421f1b88', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'WEDNESDAY', '08:00:00', '12:00:00', 20, 5,TRUE),
+    ('1e3f2480-3e5e-44a6-a7a4-4a2683d4c9f3', '3c83ab8b-28d6-4b6b-a8a4-d6d2421f1b88', 'c51b8083-58a3-4db1-98b7-326c9e3e7571', 'FRIDAY', '13:00:00', '17:00:00', 20, 5,TRUE)
 ON CONFLICT (id) DO NOTHING;
+
+-- Doctor-Service join table
+CREATE TABLE IF NOT EXISTS doctor_service (
+    doctor_id UUID NOT NULL,
+    service_id UUID NOT NULL,
+    PRIMARY KEY (doctor_id, service_id),
+    CONSTRAINT fk_doctor FOREIGN KEY (doctor_id) REFERENCES doctor(id) ON DELETE CASCADE,
+    CONSTRAINT fk_service FOREIGN KEY (service_id) REFERENCES service(service_id) ON DELETE CASCADE
+);
+
+-- Sample data for doctor_service
+INSERT INTO doctor_service (doctor_id, service_id) VALUES
+    -- Doctor John Doe's services (Cardiology and General medicine)
+    ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'e8a1c2b1-3b7b-49c2-9138-9df3e1f4b761'),  -- General checkup
+    ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'ba8e6b51-d1ec-4f35-9f58-6c6947fbd26b'),  -- Diabetes consultation
+    ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', '5ac9d4d9-1e82-464e-8a6e-705aee4f0c83'),  -- Hypertension checkup
+
+    -- Doctor Jane Smith's services (Dermatology)
+    ('b2c3d4e5-f678-90ab-cdef-234567890abc', '6a6c5fd8-f4f7-4c1d-91f2-31f9b3fcbb38'),  -- Acne treatment
+    ('b2c3d4e5-f678-90ab-cdef-234567890abc', 'f9db6d4a-0d77-4d45-b7ee-8027032bdf63'),  -- Skin analysis
+    ('b2c3d4e5-f678-90ab-cdef-234567890abc', 'e41b50a5-c167-4c46-8aa5-227b8efeb14b'),  -- Skin care
+
+    -- Doctor Minh Nguyễn's services
+    ('2d1a60e1-fb44-4b93-86c3-1c5ef7c379a1', 'e8a1c2b1-3b7b-49c2-9138-9df3e1f4b761'),  -- General checkup
+    ('2d1a60e1-fb44-4b93-86c3-1c5ef7c379a1', 'cfb78b79-ff2e-4891-8b4b-b672f85d160f'),  -- Liver screening
+    ('2d1a60e1-fb44-4b93-86c3-1c5ef7c379a1', '68c73b74-d5db-4ff3-8e09-5e930b36086d'),  -- Pediatric checkup
+
+    -- Doctor Lan Trần's services
+    ('3c83ab8b-28d6-4b6b-a8a4-d6d2421f1b88', 'fb5114a1-f800-4e14-b82a-8a9b9f7c86d9'),  -- Pregnancy checkup
+    ('3c83ab8b-28d6-4b6b-a8a4-d6d2421f1b88', '939ee6fc-2d48-4c07-83c8-7166be4223a7'),  -- Prenatal consultation
+    ('3c83ab8b-28d6-4b6b-a8a4-d6d2421f1b88', 'bb73a0e0-3d77-4b9a-a8d1-f00f1188d927'),  -- Gynecology checkup
+
+    -- Doctor Tùng Phạm's services
+    ('5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', '47b041b2-7690-4662-9962-003207f4db06'),  -- ENT checkup
+    ('5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', 'fdbcb36e-5d78-4a14-9a0e-0f49d295d780'),  -- ENT endoscopy
+    ('5fd451cc-c4aa-4ab4-b2d1-ec33a4d2de75', 'b0dfb7ad-2ac0-41d3-9d62-3c39f098d1aa'),  -- Hearing test
+
+    -- Doctor Hương Lê's services
+    ('9a654af0-49e1-4a2d-b12d-e5b87f95cd93', '16c78249-5084-4d90-874e-d2fcbeb99795'),  -- Pediatric respiratory checkup
+    ('9a654af0-49e1-4a2d-b12d-e5b87f95cd93', '8a7d6f87-099e-4971-8e06-556522d9f6ee'),  -- Pediatric nutrition consultation
+    ('9a654af0-49e1-4a2d-b12d-e5b87f95cd93', '68c73b74-d5db-4ff3-8e09-5e930b36086d')   -- Pediatric checkup
+ON CONFLICT (doctor_id, service_id) DO NOTHING;
+
+-- Adding index to improve query performance for service lookup
+CREATE INDEX IF NOT EXISTS idx_doctor_service_service_id ON doctor_service(service_id);
+CREATE INDEX IF NOT EXISTS idx_doctor_service_doctor_id ON doctor_service(doctor_id);

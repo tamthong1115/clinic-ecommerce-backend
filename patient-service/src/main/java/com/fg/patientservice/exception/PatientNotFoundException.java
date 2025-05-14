@@ -1,12 +1,12 @@
-package com.fg.authservice.exception;
+package com.fg.patientservice.exception;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class InvalidCredentialsException extends RuntimeException{
+public class PatientNotFoundException extends RuntimeException{
     private String message;
 
-    public InvalidCredentialsException(String message) {}
+    public PatientNotFoundException(String message) {}
 }

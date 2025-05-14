@@ -1,4 +1,4 @@
-package com.fg.patientservice.patient.dto;
+package com.fg.authservice.client.patient;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

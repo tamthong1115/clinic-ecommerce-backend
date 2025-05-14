@@ -1,4 +1,4 @@
-package com.fg.authservice.handler;
+package com.fg.patientservice.handler;
 
 import lombok.Builder;
 import lombok.Data;

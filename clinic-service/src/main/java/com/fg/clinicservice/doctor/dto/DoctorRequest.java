@@ -1,5 +1,6 @@
 package com.fg.clinicservice.doctor.dto;
 
+import com.fg.clinicservice.doctor.model.Doctor;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,4 +32,6 @@ public class DoctorRequest {
 
     @NotBlank(message = "Education is required")
     private String education;
+
+    private Doctor.DoctorStatus status;
 } 

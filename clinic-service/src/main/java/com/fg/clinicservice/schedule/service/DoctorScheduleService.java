@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DoctorScheduleService {
-    DoctorScheduleDTO createSchedule( UUID doctorId, DoctorScheduleRequest request);
+    DoctorScheduleDTO createScheduleByUserId(UUID userId, DoctorScheduleRequest request);
     DoctorScheduleDTO updateSchedule(UUID clinicID, UUID scheduleId, DoctorScheduleRequest request);
     void deleteSchedule(UUID scheduleId);
     List<DoctorScheduleDTO> getDoctorSchedules();

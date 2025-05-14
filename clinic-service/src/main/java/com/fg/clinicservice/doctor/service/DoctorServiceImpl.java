@@ -1,6 +1,8 @@
 package com.fg.clinicservice.doctor.service;
 
-
+import com.fg.clinicservice.service_clinic.model.EService;
+import com.fg.clinicservice.client.appointment.AppointmentClient;
+import com.fg.clinicservice.client.appointment.TimeSlotDTO;
 import com.fg.clinicservice.client.user.AuthClient;
 import com.fg.clinicservice.client.user.RegisterRequestWithRoleDTO;
 import com.fg.clinicservice.client.user.Role;
@@ -19,6 +21,7 @@ import com.fg.clinicservice.util.CloudinaryService;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,9 +32,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.criteria.Predicate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +48,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final static String DEFAULT_PASSWORD = "Doctor@123";
     private final static String ROLE_DOCTOR = Role.DOCTOR.name();
+    private final AppointmentClient appointmentClient;
 
     @Override
     @Transactional
@@ -61,18 +65,18 @@ public class DoctorServiceImpl implements DoctorService {
                 .build();
 
         ResponseEntity<UserDTO> userResponse = authClient.createUser(registerRequest);
-        if(userResponse.getBody() == null) {
+        if (userResponse.getBody() == null) {
             throw new RuntimeException("Failed to create user account");
         }
 
         Doctor doctor = doctorMapper.toEntity(doctorRequest);
         String defaultProfilePicture = null;
-        if(doctorRequest.getGender().toUpperCase() == "MALE"){
+        if (doctorRequest.getGender().toUpperCase() == "MALE") {
             defaultProfilePicture = "https://res.cloudinary.com/dulzekaen/image/upload/v1746699451/flat-style-vector-illustration-medical-illustrator_1033579-58110_grznrx.avif";
-        } else if(doctorRequest.getGender().toUpperCase() == "FEMALE"){
+        } else if (doctorRequest.getGender().toUpperCase() == "FEMALE") {
             defaultProfilePicture = "https://res.cloudinary.com/dulzekaen/image/upload/v1746700376/istockphoto-1190555586-1024x1024_wucd29.jpg";
-        }else{
-            defaultProfilePicture= "https://res.cloudinary.com/dulzekaen/image/upload/v1746700456/images_s1mhzv.png";
+        } else {
+            defaultProfilePicture = "https://res.cloudinary.com/dulzekaen/image/upload/v1746700456/images_s1mhzv.png";
         }
 
 
@@ -112,6 +116,13 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    public UUID getDoctorIdByUserId(UUID userId) {
+        return doctorRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found for user ID: " + userId))
+                .getId();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<DoctorBasicResponse> getAllDoctors() {
         return doctorRepository.findAll().stream()
@@ -124,7 +135,7 @@ public class DoctorServiceImpl implements DoctorService {
     public DoctorDetailResponse updateDoctor(UUID id, DoctorRequest doctorRequest) {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
-        
+
         doctorMapper.updateEntity(doctor, doctorRequest);
         Doctor updatedDoctor = doctorRepository.save(doctor);
         return doctorMapper.toDetailResponse(updatedDoctor);
@@ -170,15 +181,8 @@ public class DoctorServiceImpl implements DoctorService {
 
         if (criteria.getClinicId() != null) {
             spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("clinic").get("id"), criteria.getClinicId())
+                    cb.equal(root.get("clinic").get("clinicId"), criteria.getClinicId())
             );
-        }
-
-        if (criteria.getSpecialityId() != null) {
-            spec = spec.and((root, query, cb) -> {
-                Join<Doctor, Speciality> specialities = root.join("specialities", JoinType.INNER);
-                return cb.equal(specialities.get("id"), criteria.getSpecialityId());
-            });
         }
 
         if (criteria.getServiceId() != null) {
@@ -187,6 +191,7 @@ public class DoctorServiceImpl implements DoctorService {
                 return cb.equal(services.get("id"), criteria.getServiceId());
             });
         }
+
 
         if (criteria.getMinExperience() != null) {
             spec = spec.and((root, query, cb) ->
@@ -229,8 +234,45 @@ public class DoctorServiceImpl implements DoctorService {
         // Execute the query with the specification and pageable
         Page<Doctor> doctorsPage = doctorRepository.findAll(spec, pageable);
 
-        // Map results to DTOs
-        return doctorsPage.map(doctorMapper::toSearchResponse);
+
+
+        return doctorsPage.map(doctor -> {
+            DoctorSearchResponse response = doctorMapper.toSearchResponse(doctor);
+            // Prepare full weekly schedule based on next 7 days
+            List<DoctorSearchResponse.ScheduleInfo> finalSchedules = new ArrayList<>();
+
+            // Loop through next 7 days
+            for (int i = 0; i < 7; i++) {
+                LocalDate date = LocalDate.now().plusDays(i);
+                DayOfWeek dayOfWeek = date.getDayOfWeek();
+
+                // Filter doctor's schedules that match this day of week
+                List<DoctorSchedule> dailySchedules = doctor.getDoctorSchedules().stream()
+                        .filter(s -> s.getDayOfWeek() == dayOfWeek)
+                        .collect(Collectors.toList());
+
+                List<TimeSlotDTO> bookedTimeSlots = appointmentClient.getBookedTimeSlots(doctor.getUserId(), date);
+
+                for (DoctorSchedule schedule : dailySchedules) {
+                    DoctorSearchResponse.ScheduleInfo scheduleInfo = new DoctorSearchResponse.ScheduleInfo();
+                    scheduleInfo.setId(schedule.getId());
+                    scheduleInfo.setDate(date);
+                    scheduleInfo.setStartTime(schedule.getStartTime());
+                    scheduleInfo.setEndTime(schedule.getEndTime());
+
+                    boolean isBooked = bookedTimeSlots.stream().anyMatch(booked ->
+                            !(booked.getEndTime().isBefore(schedule.getStartTime()) || booked.getStartTime().isAfter(schedule.getEndTime()))
+                    );
+
+
+                    scheduleInfo.setBooked(isBooked);
+                    finalSchedules.add(scheduleInfo);
+                }
+            }
+
+            response.setSchedules(finalSchedules);
+            return response;
+        });
     }
 
     @Override
@@ -256,13 +298,6 @@ public class DoctorServiceImpl implements DoctorService {
                 predicates.add(criteriaBuilder.equal(root.get("clinic").get("clinicId"), criteria.getClinicId()));
             }
 
-            if (criteria.getSpecializationName() != null && !criteria.getSpecializationName().isEmpty()) {
-                Join<Doctor, Speciality> specialityJoin = root.join("specialities", JoinType.INNER);
-                predicates.add(criteriaBuilder.like(
-                        criteriaBuilder.lower(specialityJoin.get("name")),
-                        "%" + criteria.getSpecializationName().toLowerCase() + "%"
-                ));
-            }
 
             if (criteria.getServiceName() != null && !criteria.getServiceName().isEmpty()) {
                 Join<Doctor, EService> serviceJoin = root.join("services", JoinType.INNER);
@@ -290,6 +325,8 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public Page<DoctorBasicResponse> getAllDoctorsBasic(int page, int size, String sortBy, String direction) {
+
+
         Sort sort = direction.equalsIgnoreCase("asc") ?
                 Sort.by(sortBy).ascending() :
                 Sort.by(sortBy).descending();
