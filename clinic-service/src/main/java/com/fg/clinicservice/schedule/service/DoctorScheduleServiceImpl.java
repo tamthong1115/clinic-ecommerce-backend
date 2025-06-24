@@ -36,9 +36,15 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
     @Override
     @Transactional
-    public DoctorScheduleDTO createScheduleByUserId(UUID userId, DoctorScheduleRequest request) {
-        Doctor doctor = doctorRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found for user ID: " + userId));
+    public DoctorScheduleDTO createScheduleByUserId(UUID userId,UUID doctorId, DoctorScheduleRequest request) {
+        Doctor doctor = null;
+        if(doctorId == null){
+           doctor = doctorRepository.findByUserId(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Doctor not found for user ID: " + userId));
+        }else{
+            doctor = doctorRepository.findById(doctorId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + doctorId));
+        }
 
         DoctorSchedule schedule = new DoctorSchedule();
         schedule.setDoctor(doctor);

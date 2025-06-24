@@ -43,11 +43,12 @@ public class DoctorController {
         return ResponseEntity.ok(new DoctorIdResponse(doctorId));
     }
 
-    @PostMapping("/{userId}/create-schedule")
+    @PostMapping("/create-schedule")
     public ResponseEntity<DoctorScheduleDTO> createSchedule(
-            @PathVariable UUID userId,
+            @RequestParam(required = false) UUID userId,
+            @RequestParam(required = false) UUID doctorId,
             @Valid @RequestBody DoctorScheduleRequest request) {
-        return ResponseEntity.ok(scheduleService.createScheduleByUserId(userId, request));
+        return ResponseEntity.ok(scheduleService.createScheduleByUserId(userId,doctorId, request));
     }
 
     @PutMapping("/{doctorId}/schedules/{scheduleId}")
