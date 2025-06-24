@@ -1,6 +1,7 @@
 package com.fg.clinicservice.controller;
 
 import com.fg.clinicservice.client.user.UserDTO;
+import com.fg.clinicservice.doctor.dto.DoctorDTO;
 import com.fg.clinicservice.doctor.dto.DoctorDetailResponse;
 import com.fg.clinicservice.doctor.dto.DoctorIdResponse;
 import com.fg.clinicservice.doctor.dto.DoctorRequest;
@@ -27,7 +28,7 @@ public class DoctorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DoctorDetailResponse> updateDoctor(@PathVariable UUID id, @Valid @RequestBody DoctorRequest doctorRequest) {
+    public ResponseEntity<DoctorDTO> updateDoctor(@PathVariable UUID id, @Valid @RequestBody DoctorRequest doctorRequest) {
         return ResponseEntity.ok(doctorService.updateDoctor(id, doctorRequest));
     }
 
@@ -42,11 +43,12 @@ public class DoctorController {
         return ResponseEntity.ok(new DoctorIdResponse(doctorId));
     }
 
-    @PostMapping("/{userId}/create-schedule")
+    @PostMapping("/create-schedule")
     public ResponseEntity<DoctorScheduleDTO> createSchedule(
-            @PathVariable UUID userId,
+            @RequestParam(required = false) UUID userId,
+            @RequestParam(required = false) UUID doctorId,
             @Valid @RequestBody DoctorScheduleRequest request) {
-        return ResponseEntity.ok(scheduleService.createScheduleByUserId(userId, request));
+        return ResponseEntity.ok(scheduleService.createScheduleByUserId(userId,doctorId, request));
     }
 
     @PutMapping("/{doctorId}/schedules/{scheduleId}")

@@ -7,7 +7,8 @@ import java.util.UUID;
 @Data
 public class DoctorDTO {
     private UUID id;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String email;
     private String phone;
     private String gender;

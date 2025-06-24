@@ -21,7 +21,7 @@ public interface AppointmentService {
 
     List<TimeSlotDTO> getBookedTimeSlots(UUID doctorId, LocalDate date);
 
-    List<AppointmentDTO> getAppointmentsByPatientId(UUID patientId);
+    List<AppointmentDTO> getAppointmentsByPatientId(UUID userId);
 
     Map<LocalDate, List<AppointmentDTO>> getDoctorCalendarAppointments(UUID userId, LocalDate referenceDate);
 }
